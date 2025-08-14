@@ -153,7 +153,7 @@ Execução rápida:
 | CRUD Adotantes                                                             | C | C | C | **A/R** | C | C |
 | Relatórios/Exportações (CSV/PDF)                                                    | C | C | C | **A/R** | C | C |
 | Banco de Dados (modelagem, migrações, índices)                                      | I | C | C | C | **A/R** | I |
-| Observabilidade (Actuator, logs estruturados, métricas)                             | **A/R** | C | C | C | I | C |
+| Observabilidade (Actuator, logs estruturados, métricas)                             | **A/R** | C | C | C | **A/R** | C |
 | Backups & Restore                                                                   | **A/R** | I | I | I | C | C |
 | Qualidade & Testes (unit, integração, E2E, cobertura, DoD)                          | C | C | R | R | I | **A/R** |
 | Segurança & LGPD (políticas, auditoria mínima)                                      | C | C | C | C | C | **A/R** |
