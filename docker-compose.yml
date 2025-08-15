@@ -1,0 +1,58 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:16-alpine # Imagem remota do Docker Hub
+    container_name: petshop_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432" # Expõe a porta para acesso externo (ex: DBeaver)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Serviço do Backend (Spring Boot)
+  backend:
+    container_name: petshop_backend
+    build:
+      context: ./backend/PetAdoption/PetAdoption # Pasta onde está o Dockerfile do backend
+      dockerfile: DockerFile
+    depends_on:
+      - postgres # Garante que o postgres inicie antes do backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8080:8080" # Expõe a porta da API
+    networks:
+      - app-network
+
+  # Serviço do Frontend (Vue.js com Nginx)
+  frontend:
+    container_name: petshop_frontend
+    build:
+      context: ./frontend/pet_adoption_frontend # Pasta onde está o Dockerfile do frontend
+      dockerfile: DockerFile
+    ports:
+      - "80:80" # Expõe a porta 80 para acesso web
+    depends_on:
+      - backend # Garante que o backend inicie antes do frontend
+    networks:
+      - app-network
+
+# Volumes para persistência de dados
+volumes:
+  postgres_data:
+
+# Rede para comunicação entre os contêineres
+networks:
+  app-network:
+    driver: bridge
