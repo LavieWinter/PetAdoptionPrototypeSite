@@ -15,6 +15,9 @@ https://brpucrs-my.sharepoint.com/:w:/g/personal/lavinia_winter_edu_pucrs_br/ERY
     - At least one person needs to aprove your PR for you to be able to merge it.
  
 ### Running the code 
+You'll need your credentials configured on the .env file
+First use the .env.example file and remove the .example. 
+Request for other contributer for your credentials. Remember: the .env file is on .gitignore and it MUST NOT be commited.
 
 Run this command to build your code.
 - You will need to have installed docker compose
