@@ -1,5 +1,6 @@
 package com.example.PetAdoption.dominio.entidades;
 
+
 public class AdotanteModel {
     private Long id;
     private String nome;
