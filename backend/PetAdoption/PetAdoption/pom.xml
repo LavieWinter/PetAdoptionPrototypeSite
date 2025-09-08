@@ -51,7 +51,7 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
 			<version>${flyway.version}</version> <!-- uses Spring Boot's managed Flyway version -->
-  			<scope>runtime</scope>
+			<scope>runtime</scope>
 		</dependency>
 
 
