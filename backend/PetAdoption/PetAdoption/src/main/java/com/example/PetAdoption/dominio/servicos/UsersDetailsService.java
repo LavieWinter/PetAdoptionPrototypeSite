@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 public class UsersDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public UsersDetails loadUserByUsername(String username) {
