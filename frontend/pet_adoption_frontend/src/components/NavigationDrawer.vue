@@ -52,14 +52,14 @@
         <template #selection="{ item, index, props }">
           <v-chip v-bind="props" class="ma-1" size="small" color="secondary" variant="tonal" closable
             @click:close="removeTrait(index)">
-            {{ item.title ?? item.title }}
+            {{ item }}
           </v-chip>
         </template>
 
-        <!-- item da lista -->
-        <template #item="{ item }">
-          <v-list-item>
-            <v-list-item-title v-html="highlight(item.title ?? item, traitsSearch)" />
+        <!-- item da lista (AGORA com props no escopo) -->
+        <template #item="{ item, props }">
+          <v-list-item v-bind="props">
+            <v-list-item-title v-html="highlight(item, traitsSearch)" />
           </v-list-item>
         </template>
       </v-combobox>
@@ -71,13 +71,13 @@
         <template #selection="{ item, index, props }">
           <v-chip v-bind="props" class="ma-1" size="small" color="secondary" variant="tonal" closable
             @click:close="removeNeed(index)">
-            {{ item.title ?? item.title }}
+            {{ item }}
           </v-chip>
         </template>
 
-        <template #item="{ item }">
-          <v-list-item>
-            <v-list-item-title v-html="highlight(item.title ?? item.title, needsSearch)" />
+        <template #item="{ item, props }">
+          <v-list-item v-bind="props">
+            <v-list-item-title v-html="highlight(item, needsSearch)" />
           </v-list-item>
         </template>
       </v-combobox>
@@ -164,7 +164,7 @@ const needsOptions = [
 ]
 
 const traitsSearch = ref('')
-const needsSearch  = ref('')
+const needsSearch = ref('')
 
 function applyFilters() {
   // emita/consuma conforme sua arquitetura
