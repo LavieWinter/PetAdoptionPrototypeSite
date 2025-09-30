@@ -6,10 +6,10 @@ public class PetModel {
     private Long id;
     private String nome;
 
-    private EspeciePet especie; // cachorro, gato, ...
-    private PortePet porte;
+    private SpeciesPet especie; // cachorro, gato, ...
+    private PetSize porte;
     private RacaPet raca; // SRD, outros ...
-    private SexoPet sexo; //M ou F
+    private PetGender sexo; //M ou F
     private SocialPet social; //nao usado
     private StatusPet status;
     // Categoria saude
@@ -26,10 +26,10 @@ public class PetModel {
 
    public PetModel(Long id,
                     String nome,
-                    EspeciePet especie,
-                    PortePet porte,
+                    SpeciesPet especie,
+                    PetSize porte,
                     RacaPet raca,
-                    SexoPet sexo,
+                    PetGender sexo,
                     SocialPet social,
                     StatusPet status,
                     SaudePet semNecessidadeOuTratamento,
@@ -94,17 +94,17 @@ public class PetModel {
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public EspeciePet getEspecie() { return especie; }
-    public void setEspecie(EspeciePet especie) { this.especie = especie; }
+    public SpeciesPet getEspecie() { return especie; }
+    public void setEspecie(SpeciesPet especie) { this.especie = especie; }
 
-    public PortePet getPorte() { return porte; }
-    public void setPorte(PortePet porte) { this.porte = porte; }
+    public PetSize getPorte() { return porte; }
+    public void setPorte(PetSize porte) { this.porte = porte; }
 
     public RacaPet getRaca() { return raca; }
     public void setRaca(RacaPet raca) { this.raca = raca; }
 
-    public SexoPet getSexo() { return sexo; }
-    public void setSexo(SexoPet sexo) { this.sexo = sexo; }
+    public PetGender getSexo() { return sexo; }
+    public void setSexo(PetGender sexo) { this.sexo = sexo; }
 
     public SocialPet getSocial() { return social; }
     public void setSocial(SocialPet social) { this.social = social; }
