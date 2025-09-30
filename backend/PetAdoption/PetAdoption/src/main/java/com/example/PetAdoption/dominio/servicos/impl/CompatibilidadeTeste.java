@@ -12,10 +12,10 @@ public class CompatibilidadeTeste {
         PetModel petA = new PetModel();
         petA.setId(1L);
         petA.setNome("Luna");
-        petA.setEspecie(EspeciePet.cachorro);
+        petA.setEspecie(SpeciesPet.cachorro);
         petA.setRaca(RacaPet.SRD);
-        petA.setPorte(PortePet.pequeno);
-        petA.setSexo(SexoPet.F);
+        petA.setPorte(PetSize.pequeno);
+        petA.setSexo(PetGender.F);
         petA.setStatus(StatusPet.disponivel);
         petA.setNecessidadeOuTratamento(SaudePet.comNecessidadesOuTratamentoContinuo);
         petA.setCronicasOuIncuraveis(SaudePet.semDoencas);
@@ -24,10 +24,10 @@ public class CompatibilidadeTeste {
         petA.setExigeCuidadosConstantes(true);
 
         PreferenciasAdotante prefA = new PreferenciasAdotante();
-        prefA.setEspecieDesejada(EspeciePet.cachorro);
+        prefA.setEspecieDesejada(SpeciesPet.cachorro);
         prefA.setRacaDesejada(RacaPet.SRD);
-        prefA.setPorteDesejado(PortePet.pequeno);
-        prefA.setSexoDesejado(SexoPet.F);
+        prefA.setPorteDesejado(PetSize.pequeno);
+        prefA.setSexoDesejado(PetGender.F);
         prefA.setAceiteNecessidades(AceiteNecessidades.ACEITA_NECESSIDADES_OU_TRATAMENTO);
         prefA.setAceiteCronicas(AceiteCronicas.SOMENTE_SEM_CRONICAS);
         prefA.setPossuiOutrosAnimais(true);
@@ -42,10 +42,10 @@ public class CompatibilidadeTeste {
         PetModel petB = new PetModel();
         petB.setId(2L);
         petB.setNome("Neco");
-        petB.setEspecie(EspeciePet.gato);
+        petB.setEspecie(SpeciesPet.gato);
         petB.setRaca(RacaPet.outros);
-        petB.setPorte(PortePet.medio);
-        petB.setSexo(SexoPet.M);
+        petB.setPorte(PetSize.medio);
+        petB.setSexo(PetGender.M);
         petB.setStatus(StatusPet.disponivel);
         petB.setNecessidadeOuTratamento(SaudePet.semNecessidadesSemTratamento);
         petB.setCronicasOuIncuraveis(SaudePet.comDoencas);
