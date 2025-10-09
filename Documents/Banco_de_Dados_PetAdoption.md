@@ -345,27 +345,47 @@ WHERE a.id = :application_id;
 
 ---
 
-## 6) Índices e Otimizações (sugestões)
+## 6) Compatibilidade Eurística
+**Entrada:** `adopter_id`, `pet_id`, opcional `application_id`  
+**Preferências usadas:**  
+- Se `application_id` existir → `application_preferences` (snapshot)  
+- Senão → `adopter_preferences` (default do usuário)
 
-- Já existem:
-  - `idx_pets_status`
-  - `uq_pet_photos_primary` (parcial)
-  - `idx_pet_photos_pet`
-- Recomendados (dependendo de queries reais):
-  ```sql
-  CREATE INDEX IF NOT EXISTS idx_apps_adopter_status
-    ON adoption_applications(adopter_id, status);
+### Impeditivos (score = 0 se qualquer ocorrer)
+- Pet com **necessidades especiais** e adotante **não aceita**
+- Pet em **tratamento contínuo** e adotante **não aceita**
+- Pet com **doença crônica** e adotante **não aceita**
+- Pet **exige cuidado constante** e adotante **não tem tempo**
+- Adotante **tem outros pets** e o pet **não convive bem** com outros animais  
+*(Valores nulos = “desconhecido”: não bloqueiam nem somam.)*
 
-  CREATE INDEX IF NOT EXISTS idx_adoptions_tutor_status
-    ON adoptions(tutor_id, status);
+### Pontuação (se não houve impeditivo)
+- Espécie igual → **30**
+- Porte/tamanho igual → **20**
+- Adotante tem outros pets **e** pet convive bem → **20**
+- Pet exige cuidado constante **e** adotante tem tempo → **15**
+- Pet em tratamento contínuo **e** adotante aceita → **5**
+- Pet com doença crônica **e** adotante aceita → **5**
+- Pet com necessidades especiais **e** adotante aceita → **5**  
+**Total:** 100
 
-  CREATE INDEX IF NOT EXISTS idx_events_type_phase
-    ON events(event_type, phase);
+### Uso rápido (SQL)
+Função (PL/pgSQL) `compute_compatibility_score(adopter_id, pet_id, application_id default NULL)`  
+Exemplos:
+```sql
+-- Recomendações (default do usuário)
+SELECT p.id, p.name,
+       compute_compatibility_score(:user_id, p.id, NULL) AS score
+FROM pets p
+WHERE p.status = 'AVAILABLE'
+ORDER BY score DESC NULLS LAST
+LIMIT 20;
 
-  CREATE INDEX IF NOT EXISTS idx_apps_pet_status
-    ON adoption_applications(pet_id, status);
-  ```
-
+-- Score para uma aplicação (usa snapshot)
+SELECT compute_compatibility_score(a.adopter_id, a.pet_id, a.id) AS score
+FROM adoption_applications a
+WHERE a.id = :application_id;
+```
 ---
 
 ## 7) Boas Práticas & Cuidados
@@ -376,7 +396,6 @@ WHERE a.id = :application_id;
 - **Enums** (`event_type_enum`): mudanças em enums exigem migrações cuidadosas (adicionar valores é simples; remover/renomear exige planos).
 - **Dados binários**: prefira `PET_PHOTOS` com storage externo; `PET_PHOTOS_INLINE` é para cenários pequenos ou POCs.
 - **Integridade de snapshot**: `application_preferences` **não** atualiza automaticamente se o usuário muda o default — isso é **intencional**.
-- **FKs tardias**: algumas FKs são adicionadas após todas as tabelas existirem; mantenha essa estratégia em futuras migrações com dependências cíclicas.
 
 ---
 
@@ -407,12 +426,3 @@ FROM flyway_schema_history
 ORDER BY installed_rank;
 ```
 
----
-
-## 9) Próximos Passos (evoluções comuns)
-
-- **Constraint**: `UNIQUE (application_id)` em `adoptions` para reforçar “1 app → 1 adoção”.
-- **Regras de fase** (`events.phase`): constraint que exige `adoption_id` quando `phase = 'POST_ADOPTION'`.
-- **Políticas de deleção**: revisar `ON DELETE` de FKs conforme as regras de negócio (ex.: `CASCADE` x `RESTRICT`).
-- **Auditoria**: `created_by`, `updated_by`, `deleted_at` (soft delete) em tabelas críticas.
-- **Templates múltiplos** de preferências: introduzir `user_preference_sets` com seleção por `preference_set_id` na application.
