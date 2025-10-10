@@ -1,0 +1,133 @@
+/* package com.example.PetAdoption.dominio.entidades;
+
+import com.example.PetAdoption.dominio.enums.*;
+
+public class PetModel {
+    private Long id;
+    private String nome;
+
+    private SpeciesPet especie; // cachorro, gato, ...
+    private PetSize porte;
+    private RacaPet raca; // SRD, outros ...
+    private PetGender sexo; //M ou F
+    private PetSocial social; //nao usado
+    private PetStatus status;
+    // Categoria saude
+    private PetHealth necessidadeOuTratamento;
+    private PetHealth cronicasOuIncuraveis;
+
+    // Categoria “Social/Tempo” (Essas 3 sao indepen)
+    private boolean sociavel; // +5 se adotante tem outros animais
+    private boolean naoSociavel; // IMPEDITIVO se adotante tem outros animais
+    private boolean exigeCuidadosConstantes; // +5 se adotante tem tempo; senão IMPEDITIVO
+
+    public PetModel() {
+    }
+
+   public PetModel(Long id,
+                    String nome,
+                    SpeciesPet especie,
+                    PetSize porte,
+                    RacaPet raca,
+                    PetGender sexo,
+                    PetSocial social,
+                    PetStatus status,
+                    PetHealth semNecessidadeOuTratamento,
+                    PetHealth semDoencas,
+                    boolean sociavel,
+                    boolean naoSociavel,
+                    boolean exigeCuidadosConstantes) {
+        this.id = id;
+        this.nome = nome;
+        this.especie = especie;
+        this.porte = porte;
+        this.raca = raca;
+        this.sexo = sexo;
+        this.social = social;
+        this.status = status;
+        this.necessidadeOuTratamento = semNecessidadeOuTratamento;
+        this.cronicasOuIncuraveis = semDoencas;
+        this.sociavel = sociavel;
+        this.naoSociavel = naoSociavel;
+        this.exigeCuidadosConstantes = exigeCuidadosConstantes;
+        validarInvariantes();
+    }
+
+    
+    public void validarInvariantes() {
+        // Social: não pode ser sociável e não sociável ao mesmo tempo
+        if (sociavel && naoSociavel) {
+            throw new IllegalStateException("Pet não pode ser sociável e não sociável simultaneamente.");
+        }
+        // Saúde (eixo 1): apenas os dois valores válidos
+        if (necessidadeOuTratamento != PetHealth.comNecessidadesOuTratamentoContinuo
+                && necessidadeOuTratamento != PetHealth.semNecessidadesSemTratamento) {
+            throw new IllegalStateException(
+                "semNecessidadeOuTratamento deve ser comNecessidadesOuTratamentoContinuo OU semNecessidadesSemTratamento.");
+        }
+        // Saúde (eixo 2): apenas os dois valores válidos
+        if (cronicasOuIncuraveis != PetHealth.NO_CHRONIC_DISEASE
+                && cronicasOuIncuraveis != PetHealth.NO_CHRONIC_DISEASE) {
+            throw new IllegalStateException(
+                "semDoencas deve ser comDoencas OU semDoencas.");
+        }
+    }
+
+    // ——  usados pelo serviço de compatibilidade —— //
+    public boolean temNecessidadesOuTratamento() {
+        return necessidadeOuTratamento == PetHealth.comNecessidadesOussidadesOuTratamentoContinuo OU semNecessidadesSemTratamento.");
+        }
+        // Saúde (eixo 2): apenas os dois valores válidos
+        if (cronicasOuIncuraveis != PetHealth.HAS_CHRONIC_DISEASE,
+                && cronicasOuIncuraveis != SaudePet.TratamentoContinuo;
+    }
+    public boolean semNecessidadesSemTratamento() {
+        return necessidadeOuTratamento == PetHealth.semNecessidadesSemTratamento;
+    }
+    public boolean temDoencas() {
+        return cronicasOuIncuraveis == PetHealth.HAS_CHRONIC_DISEASE,;
+    }
+    public boolean isSemDoencas() {
+        return cronicasOuIncuraveis == PetHealth.NO_CHRONIC_DISEASE;
+    }
+
+    // —— Getters/Setters —— //
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public SpeciesPet getEspecie() { return especie; }
+    public void setEspecie(SpeciesPet especie) { this.especie = especie; }
+
+    public PetSize getPorte() { return porte; }
+    public void setPorte(PetSize porte) { this.porte = porte; }
+
+    public RacaPet getRaca() { return raca; }
+    public void setRaca(RacaPet raca) { this.raca = raca; }
+
+    public PetGender getSexo() { return sexo; }
+    public void setSexo(PetGender sexo) { this.sexo = sexo; }
+
+    public PetSocial getSocial() { return social; }
+    public void setSocial(PetSocial social) { this.social = social; }
+
+    public PetStatus getStatus() { return status; }
+    public void setStatus(PetStatus status) { this.status = status; }
+
+    public PetHealth getNecessidadeOuTratamento() { return necessidadeOuTratamento; }
+    public void setNecessidadeOuTratamento(PetHealth v) { this.necessidadeOuTratamento = v; }
+
+    public PetHealth getCronicasOuIncuraveis() { return cronicasOuIncuraveis; }
+    public void setCronicasOuIncuraveis(PetHealth v) { this.cronicasOuIncuraveis = v; }
+
+    public boolean isSociavel() { return sociavel; }
+    public void setSociavel(boolean sociavel) { this.sociavel = sociavel; }
+
+    public boolean isNaoSociavel() { return naoSociavel; }
+    public void setNaoSociavel(boolean naoSociavel) { this.naoSociavel = naoSociavel; }
+
+    public boolean isExigeCuidadosConstantes() { return exigeCuidadosConstantes; }
+    public void setExigeCuidadosConstantes(boolean exigeCuidadosConstantes) { this.exigeCuidadosConstantes = exigeCuidadosConstantes; }
+}*/

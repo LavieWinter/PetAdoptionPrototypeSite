@@ -117,6 +117,33 @@ public class UserController {
         }
         return ResponseEntity.noContent().build();
     }
+    
+@GetMapping("/me")
+public ResponseEntity<UserDto> me(Authentication auth) {
+    if (auth == null || auth.getName() == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    String email = auth.getName(); 
+    var user = users.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+    var dto = new UserDto(
+            user.getId(),
+            user.getName(),
+            user.getEmail(),
+            user.getPhone(),
+            user.getRoles().stream().map(Enum::name).toList()
+    );
+    return ResponseEntity.ok(dto);
+}
+
+public record UserDto(
+        java.util.UUID id,
+        String name,
+        String email,
+        String phone,
+        java.util.List<String> roles
+) {}
 
 
     // ---------- DTOs ----------
