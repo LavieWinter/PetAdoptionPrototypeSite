@@ -33,7 +33,7 @@ services:
       - JWT_EXPIRATION=${JWT_EXPIRATION}
 
     ports:
-      - "8081:8080" # Expõe a porta da API
+      - "8080:8080" # Expõe a porta da API
     networks:
       - app-network
     volumes:
