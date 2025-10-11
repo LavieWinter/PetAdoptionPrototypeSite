@@ -1,11 +1,12 @@
-package com.example.PetAdoption.controller;
+package com.example.PetAdoption.interfAdaptadora;
 
+import com.example.PetAdoption.dominio.InterfRepositories.UserRepository;
 import com.example.PetAdoption.dominio.auth.JwtService;
 import com.example.PetAdoption.dominio.auth.TokenBlacklistService;
 import com.example.PetAdoption.dominio.entidades.UserModel;
 import com.example.PetAdoption.dominio.enums.SignupRole;
 import com.example.PetAdoption.dominio.enums.UserRoles;
-import com.example.PetAdoption.dominio.respositories.UserRepository;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;

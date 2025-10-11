@@ -1,33 +1,14 @@
 package com.example.PetAdoption.dominio.entidades;
-import jakarta.persistence.*;
-import org.hibernate.annotations.UuidGenerator;
 import java.util.UUID;
 
-@Entity
-@Table(
-    name = "org",
-    uniqueConstraints = @UniqueConstraint(name = "uk_org_email", columnNames = "email")
-)
-public class Org {
+/** Domain Model: sem JPA/Spring. */
+public class OrgModel {
 
-    @Id
-    @UuidGenerator
-    @Column(name = "org_id", nullable = false, updatable = false)
-    private UUID id;
-
-    @Column(name = "name", nullable = false)
+    private UUID id;        // org_id
     private String name;
-
-    // case-insensitive no Postgres
-    @Column(name = "email", columnDefinition = "citext")
-    private String email;
-
-    @Column(name = "phone")
+    private String email;   // citext no banco
     private String phone;
-
-    // FK opcional herdada do ERD (→ pets.id). Mantida como UUID para evitar ciclo aqui.
-    @Column(name = "pet_owned_id")
-    private UUID petOwnedId;
+    private UUID petOwnedId; // FK opcional -> pets.id
 
     // getters/setters
     public UUID getId() { return id; }

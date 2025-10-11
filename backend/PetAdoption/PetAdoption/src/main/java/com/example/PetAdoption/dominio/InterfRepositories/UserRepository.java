@@ -1,7 +1,8 @@
-package com.example.PetAdoption.dominio.respositories;
+package com.example.PetAdoption.dominio.InterfRepositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.PetAdoption.dominio.entidades.UserModel;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 //ler usuario/admin por id/email

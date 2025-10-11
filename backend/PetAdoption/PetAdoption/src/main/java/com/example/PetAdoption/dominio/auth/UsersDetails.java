@@ -1,10 +1,11 @@
 package com.example.PetAdoption.dominio.auth;
 
-import com.example.PetAdoption.dominio.entidades.UserModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.example.PetAdoption.dominio.entidades.UserModel;
 
 import java.util.Collection;
 import java.util.Collections;
