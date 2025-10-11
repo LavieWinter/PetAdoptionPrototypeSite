@@ -1,7 +1,8 @@
 package com.example.PetAdoption.dominio.servicos;
 
+import com.example.PetAdoption.dominio.InterfRepositories.UserRepository;
 import com.example.PetAdoption.dominio.auth.UsersDetails;
-import com.example.PetAdoption.dominio.respositories.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

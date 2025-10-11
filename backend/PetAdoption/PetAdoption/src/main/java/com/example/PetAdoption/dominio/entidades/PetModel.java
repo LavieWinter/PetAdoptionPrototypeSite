@@ -1,133 +1,71 @@
-/* package com.example.PetAdoption.dominio.entidades;
+package com.example.PetAdoption.dominio.entidades;
 
-import com.example.PetAdoption.dominio.enums.*;
+import com.example.PetAdoption.dominio.enums.PetStatus;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
+/** Domain Model: sem anotações JPA/Spring. */
 public class PetModel {
-    private Long id;
-    private String nome;
 
-    private SpeciesPet especie; // cachorro, gato, ...
-    private PetSize porte;
-    private RacaPet raca; // SRD, outros ...
-    private PetGender sexo; //M ou F
-    private PetSocial social; //nao usado
-    private PetStatus status;
-    // Categoria saude
-    private PetHealth necessidadeOuTratamento;
-    private PetHealth cronicasOuIncuraveis;
+    private UUID id;
+    private String name;
+    private String species;
+    private String breed;
+    private String size;
+    private String sex;
 
-    // Categoria “Social/Tempo” (Essas 3 sao indepen)
-    private boolean sociavel; // +5 se adotante tem outros animais
-    private boolean naoSociavel; // IMPEDITIVO se adotante tem outros animais
-    private boolean exigeCuidadosConstantes; // +5 se adotante tem tempo; senão IMPEDITIVO
+    private PetStatus status = PetStatus.AVAILABLE;
 
-    public PetModel() {
-    }
+    // FK -> user_admin(id)
+    private UUID rescuedById;
 
-   public PetModel(Long id,
-                    String nome,
-                    SpeciesPet especie,
-                    PetSize porte,
-                    RacaPet raca,
-                    PetGender sexo,
-                    PetSocial social,
-                    PetStatus status,
-                    PetHealth semNecessidadeOuTratamento,
-                    PetHealth semDoencas,
-                    boolean sociavel,
-                    boolean naoSociavel,
-                    boolean exigeCuidadosConstantes) {
-        this.id = id;
-        this.nome = nome;
-        this.especie = especie;
-        this.porte = porte;
-        this.raca = raca;
-        this.sexo = sexo;
-        this.social = social;
-        this.status = status;
-        this.necessidadeOuTratamento = semNecessidadeOuTratamento;
-        this.cronicasOuIncuraveis = semDoencas;
-        this.sociavel = sociavel;
-        this.naoSociavel = naoSociavel;
-        this.exigeCuidadosConstantes = exigeCuidadosConstantes;
-        validarInvariantes();
-    }
+    // campos de saúde/comportamento
+    private String  hasSpecialNeeds;
+    private Boolean hasOngoingTreatment;
+    private String  hasChronicDisease;
+    private Boolean goodWithOtherAnimals;
+    private Boolean requiresConstantCare;
 
-    
-    public void validarInvariantes() {
-        // Social: não pode ser sociável e não sociável ao mesmo tempo
-        if (sociavel && naoSociavel) {
-            throw new IllegalStateException("Pet não pode ser sociável e não sociável simultaneamente.");
-        }
-        // Saúde (eixo 1): apenas os dois valores válidos
-        if (necessidadeOuTratamento != PetHealth.comNecessidadesOuTratamentoContinuo
-                && necessidadeOuTratamento != PetHealth.semNecessidadesSemTratamento) {
-            throw new IllegalStateException(
-                "semNecessidadeOuTratamento deve ser comNecessidadesOuTratamentoContinuo OU semNecessidadesSemTratamento.");
-        }
-        // Saúde (eixo 2): apenas os dois valores válidos
-        if (cronicasOuIncuraveis != PetHealth.NO_CHRONIC_DISEASE
-                && cronicasOuIncuraveis != PetHealth.NO_CHRONIC_DISEASE) {
-            throw new IllegalStateException(
-                "semDoencas deve ser comDoencas OU semDoencas.");
-        }
-    }
+    private LocalDate registeredDate;
+    private LocalDate rescuedAt;
 
-    // ——  usados pelo serviço de compatibilidade —— //
-    public boolean temNecessidadesOuTratamento() {
-        return necessidadeOuTratamento == PetHealth.comNecessidadesOussidadesOuTratamentoContinuo OU semNecessidadesSemTratamento.");
-        }
-        // Saúde (eixo 2): apenas os dois valores válidos
-        if (cronicasOuIncuraveis != PetHealth.HAS_CHRONIC_DISEASE,
-                && cronicasOuIncuraveis != SaudePet.TratamentoContinuo;
-    }
-    public boolean semNecessidadesSemTratamento() {
-        return necessidadeOuTratamento == PetHealth.semNecessidadesSemTratamento;
-    }
-    public boolean temDoencas() {
-        return cronicasOuIncuraveis == PetHealth.HAS_CHRONIC_DISEASE,;
-    }
-    public boolean isSemDoencas() {
-        return cronicasOuIncuraveis == PetHealth.NO_CHRONIC_DISEASE;
-    }
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
-    // —— Getters/Setters —— //
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-
-    public SpeciesPet getEspecie() { return especie; }
-    public void setEspecie(SpeciesPet especie) { this.especie = especie; }
-
-    public PetSize getPorte() { return porte; }
-    public void setPorte(PetSize porte) { this.porte = porte; }
-
-    public RacaPet getRaca() { return raca; }
-    public void setRaca(RacaPet raca) { this.raca = raca; }
-
-    public PetGender getSexo() { return sexo; }
-    public void setSexo(PetGender sexo) { this.sexo = sexo; }
-
-    public PetSocial getSocial() { return social; }
-    public void setSocial(PetSocial social) { this.social = social; }
-
+    // getters/setters
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getSpecies() { return species; }
+    public void setSpecies(String species) { this.species = species; }
+    public String getBreed() { return breed; }
+    public void setBreed(String breed) { this.breed = breed; }
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
+    public String getSex() { return sex; }
+    public void setSex(String sex) { this.sex = sex; }
     public PetStatus getStatus() { return status; }
     public void setStatus(PetStatus status) { this.status = status; }
-
-    public PetHealth getNecessidadeOuTratamento() { return necessidadeOuTratamento; }
-    public void setNecessidadeOuTratamento(PetHealth v) { this.necessidadeOuTratamento = v; }
-
-    public PetHealth getCronicasOuIncuraveis() { return cronicasOuIncuraveis; }
-    public void setCronicasOuIncuraveis(PetHealth v) { this.cronicasOuIncuraveis = v; }
-
-    public boolean isSociavel() { return sociavel; }
-    public void setSociavel(boolean sociavel) { this.sociavel = sociavel; }
-
-    public boolean isNaoSociavel() { return naoSociavel; }
-    public void setNaoSociavel(boolean naoSociavel) { this.naoSociavel = naoSociavel; }
-
-    public boolean isExigeCuidadosConstantes() { return exigeCuidadosConstantes; }
-    public void setExigeCuidadosConstantes(boolean exigeCuidadosConstantes) { this.exigeCuidadosConstantes = exigeCuidadosConstantes; }
-}*/
+    public UUID getRescuedById() { return rescuedById; }
+    public void setRescuedById(UUID rescuedById) { this.rescuedById = rescuedById; }
+    public String getHasSpecialNeeds() { return hasSpecialNeeds; }
+    public void setHasSpecialNeeds(String hasSpecialNeeds) { this.hasSpecialNeeds = hasSpecialNeeds; }
+    public Boolean getHasOngoingTreatment() { return hasOngoingTreatment; }
+    public void setHasOngoingTreatment(Boolean hasOngoingTreatment) { this.hasOngoingTreatment = hasOngoingTreatment; }
+    public String getHasChronicDisease() { return hasChronicDisease; }
+    public void setHasChronicDisease(String hasChronicDisease) { this.hasChronicDisease = hasChronicDisease; }
+    public Boolean getGoodWithOtherAnimals() { return goodWithOtherAnimals; }
+    public void setGoodWithOtherAnimals(Boolean goodWithOtherAnimals) { this.goodWithOtherAnimals = goodWithOtherAnimals; }
+    public Boolean getRequiresConstantCare() { return requiresConstantCare; }
+    public void setRequiresConstantCare(Boolean requiresConstantCare) { this.requiresConstantCare = requiresConstantCare; }
+    public LocalDate getRegisteredDate() { return registeredDate; }
+    public void setRegisteredDate(LocalDate registeredDate) { this.registeredDate = registeredDate; }
+    public LocalDate getRescuedAt() { return rescuedAt; }
+    public void setRescuedAt(LocalDate rescuedAt) { this.rescuedAt = rescuedAt; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+}

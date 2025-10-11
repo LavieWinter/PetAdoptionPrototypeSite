@@ -1,4 +1,5 @@
-package com.example.PetAdoption.dominio.entidades;
+package com.example.PetAdoption.interfAdaptadora.entidades;
+import com.example.PetAdoption.dominio.entidades.ApplicationPreferencesModel;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -8,13 +9,8 @@ import java.util.UUID;
 public class ApplicationPreferences {
 
     @Id
-    @Column(name = "application_id")
-    private UUID applicationId;
-
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_id")
-    private AdoptionApplication application;
+    @Column(name = "application_id", nullable = false, updatable = false)
+    private UUID applicationId; // PK = FK para adoption_applications(id)
 
     @Column(name = "desired_species")
     private String desiredSpecies;
@@ -43,43 +39,56 @@ public class ApplicationPreferences {
     @Column(name = "updated_at", columnDefinition = "timestamptz")
     private OffsetDateTime updatedAt;
 
+    protected ApplicationPreferences() {}
+
     @PrePersist
     void onCreate(){ createdAt = OffsetDateTime.now(); updatedAt = createdAt; }
 
     @PreUpdate
     void onUpdate(){ updatedAt = OffsetDateTime.now(); }
 
-    // getters/setters
+    // ---- getters públicos ----
     public UUID getApplicationId() { return applicationId; }
-    public void setApplicationId(UUID applicationId) { this.applicationId = applicationId; }
-
-    public AdoptionApplication getApplication() { return application; }
-    public void setApplication(AdoptionApplication application) { this.application = application; }
-
     public String getDesiredSpecies() { return desiredSpecies; }
-    public void setDesiredSpecies(String desiredSpecies) { this.desiredSpecies = desiredSpecies; }
-
     public String getDesiredSize() { return desiredSize; }
-    public void setDesiredSize(String desiredSize) { this.desiredSize = desiredSize; }
-
     public Boolean getAcceptsSpecialNeeds() { return acceptsSpecialNeeds; }
-    public void setAcceptsSpecialNeeds(Boolean acceptsSpecialNeeds) { this.acceptsSpecialNeeds = acceptsSpecialNeeds; }
-
     public Boolean getAcceptsOngoingTreatment() { return acceptsOngoingTreatment; }
-    public void setAcceptsOngoingTreatment(Boolean acceptsOngoingTreatment) { this.acceptsOngoingTreatment = acceptsOngoingTreatment; }
-
     public Boolean getAcceptsChronicDisease() { return acceptsChronicDisease; }
-    public void setAcceptsChronicDisease(Boolean acceptsChronicDisease) { this.acceptsChronicDisease = acceptsChronicDisease; }
-
     public Boolean getHasOtherPets() { return hasOtherPets; }
-    public void setHasOtherPets(Boolean hasOtherPets) { this.hasOtherPets = hasOtherPets; }
-
     public Boolean getHasTimeForConstantCare() { return hasTimeForConstantCare; }
-    public void setHasTimeForConstantCare(Boolean hasTimeForConstantCare) { this.hasTimeForConstantCare = hasTimeForConstantCare; }
-
     public OffsetDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
-
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // ---- conversores  ----
+    public static ApplicationPreferences fromModel(ApplicationPreferencesModel m){
+        if (m == null) return null;
+        var e = new ApplicationPreferences();
+        e.applicationId = m.getApplicationId();
+        e.desiredSpecies = m.getDesiredSpecies();
+        e.desiredSize = m.getDesiredSize();
+        e.acceptsSpecialNeeds = m.getAcceptsSpecialNeeds();
+        e.acceptsOngoingTreatment = m.getAcceptsOngoingTreatment();
+        e.acceptsChronicDisease = m.getAcceptsChronicDisease();
+        e.hasOtherPets = m.getHasOtherPets();
+        e.hasTimeForConstantCare = m.getHasTimeForConstantCare();
+        e.createdAt = m.getCreatedAt();
+        e.updatedAt = m.getUpdatedAt();
+        return e;
+    }
+
+    public static ApplicationPreferencesModel toModel(ApplicationPreferences e){
+        if (e == null) return null;
+        var m = new ApplicationPreferencesModel();
+        m.setApplicationId(e.applicationId);
+        m.setDesiredSpecies(e.desiredSpecies);
+        m.setDesiredSize(e.desiredSize);
+        m.setAcceptsSpecialNeeds(e.acceptsSpecialNeeds);
+        m.setAcceptsOngoingTreatment(e.acceptsOngoingTreatment);
+        m.setAcceptsChronicDisease(e.acceptsChronicDisease);
+        m.setHasOtherPets(e.hasOtherPets);
+        m.setHasTimeForConstantCare(e.hasTimeForConstantCare);
+        m.setCreatedAt(e.createdAt);
+        m.setUpdatedAt(e.updatedAt);
+        return m;
+    }
 }
