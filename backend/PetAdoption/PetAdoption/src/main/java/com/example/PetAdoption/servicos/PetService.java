@@ -1,4 +1,5 @@
 package com.example.PetAdoption.servicos;
+
 import com.example.PetAdoption.dominio.entidades.PetModel;
 import com.example.PetAdoption.dominio.enums.PetStatus;
 import com.example.PetAdoption.dominio.InterfRepositories.PetRepositoryPort;
@@ -23,6 +24,10 @@ public class PetService {
         var now = OffsetDateTime.now();
         pet.setCreatedAt(now);
         pet.setUpdatedAt(now);
+        // para não violar NOT NULL / CHECK do banco
+        if (pet.getStatus() == null) {
+            pet.setStatus(PetStatus.AVAILABLE); // ajuste para o enum que seu CHECK aceita
+        }
         return pets.save(pet);
     }
 
@@ -39,48 +44,55 @@ public class PetService {
     }
 
     public Optional<PetModel> update(UUID id, PetModel incoming) {
-    return pets.findById(id).map(existing -> {
+        return pets.findById(id).map(existing -> {
 
-        // Strings: só atualiza se não for null
-        if (incoming.getName() != null) existing.setName(incoming.getName());
-        if (incoming.getSpecies() != null) existing.setSpecies(incoming.getSpecies());
-        if (incoming.getBreed() != null) existing.setBreed(incoming.getBreed());
-        if (incoming.getSize() != null) existing.setSize(incoming.getSize());
-        if (incoming.getSex() != null) existing.setSex(incoming.getSex());
+            // Strings: só atualiza se não for null
+            if (incoming.getName() != null)
+                existing.setName(incoming.getName());
+            if (incoming.getSpecies() != null)
+                existing.setSpecies(incoming.getSpecies());
+            if (incoming.getBreed() != null)
+                existing.setBreed(incoming.getBreed());
+            if (incoming.getSize() != null)
+                existing.setSize(incoming.getSize());
+            if (incoming.getSex() != null)
+                existing.setSex(incoming.getSex());
 
-        // Enums/UUID/Data: idem
-        if (incoming.getStatus() != null) existing.setStatus(incoming.getStatus());
-        if (incoming.getRescuedById() != null) existing.setRescuedById(incoming.getRescuedById());
+            // Enums/UUID/Data: idem
+            if (incoming.getStatus() != null)
+                existing.setStatus(incoming.getStatus());
+            if (incoming.getRescuedById() != null)
+                existing.setRescuedById(incoming.getRescuedById());
 
-        // Booleans (são Boolean, não primitivo) — só aplica se não for null
-        if (incoming.getHasOngoingTreatment() != null) {
-            existing.setHasOngoingTreatment(incoming.getHasOngoingTreatment());
-        }
-        if (incoming.getGoodWithOtherAnimals() != null) {
-            existing.setGoodWithOtherAnimals(incoming.getGoodWithOtherAnimals());
-        }
-        if (incoming.getRequiresConstantCare() != null) {
-            existing.setRequiresConstantCare(incoming.getRequiresConstantCare());
-        }
+            // Booleans (são Boolean, não primitivo) — só aplica se não for null
+            if (incoming.getHasOngoingTreatment() != null) {
+                existing.setHasOngoingTreatment(incoming.getHasOngoingTreatment());
+            }
+            if (incoming.getGoodWithOtherAnimals() != null) {
+                existing.setGoodWithOtherAnimals(incoming.getGoodWithOtherAnimals());
+            }
+            if (incoming.getRequiresConstantCare() != null) {
+                existing.setRequiresConstantCare(incoming.getRequiresConstantCare());
+            }
 
-        if (incoming.getHasSpecialNeeds() != null) {
-            existing.setHasSpecialNeeds(incoming.getHasSpecialNeeds());
-        }
-        if (incoming.getHasChronicDisease() != null) {
-            existing.setHasChronicDisease(incoming.getHasChronicDisease());
-        }
+            if (incoming.getHasSpecialNeeds() != null) {
+                existing.setHasSpecialNeeds(incoming.getHasSpecialNeeds());
+            }
+            if (incoming.getHasChronicDisease() != null) {
+                existing.setHasChronicDisease(incoming.getHasChronicDisease());
+            }
 
-        if (incoming.getRegisteredDate() != null) {
-            existing.setRegisteredDate(incoming.getRegisteredDate());
-        }
-        if (incoming.getRescuedAt() != null) {
-            existing.setRescuedAt(incoming.getRescuedAt());
-        }
+            if (incoming.getRegisteredDate() != null) {
+                existing.setRegisteredDate(incoming.getRegisteredDate());
+            }
+            if (incoming.getRescuedAt() != null) {
+                existing.setRescuedAt(incoming.getRescuedAt());
+            }
 
-        existing.setUpdatedAt(OffsetDateTime.now());
-        return pets.save(existing);
-    });
-}
+            existing.setUpdatedAt(OffsetDateTime.now());
+            return pets.save(existing);
+        });
+    }
 
     public boolean delete(UUID id) {
         return pets.deleteById(id);
