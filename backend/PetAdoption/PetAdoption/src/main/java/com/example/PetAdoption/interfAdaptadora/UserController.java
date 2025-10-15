@@ -23,9 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
+
 @RestController
 @RequestMapping("/api/auth")
-//@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserRepository users;
@@ -39,8 +40,7 @@ public class UserController {
             PasswordEncoder passwordEncoder,
             AuthenticationManager authManager,
             JwtService jwtService,
-            TokenBlacklistService blacklist
-    ) {
+            TokenBlacklistService blacklist) {
         this.users = users;
         this.passwordEncoder = passwordEncoder;
         this.authManager = authManager;
@@ -96,14 +96,11 @@ public class UserController {
                 .body(new AuthResponse("User registered successfully. Token: " + token));
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody SigninRequest body) {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        body.email().trim().toLowerCase(), body.password()
-                )
-        );
+                        body.email().trim().toLowerCase(), body.password()));
         String token = jwtService.generateAccessToken(auth.getName());
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -118,34 +115,69 @@ public class UserController {
         }
         return ResponseEntity.noContent().build();
     }
-    
-@GetMapping("/me")
-public ResponseEntity<UserDto> me(Authentication auth) {
-    if (auth == null || auth.getName() == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> me(Authentication auth) {
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = auth.getName();
+        var user = users.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        var dto = new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRoles().stream().map(Enum::name).toList());
+        return ResponseEntity.ok(dto);
     }
-    String email = auth.getName(); 
-    var user = users.findByEmailIgnoreCase(email)
-            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-    var dto = new UserDto(
-            user.getId(),
-            user.getName(),
-            user.getEmail(),
-            user.getPhone(),
-            user.getRoles().stream().map(Enum::name).toList()
-    );
-    return ResponseEntity.ok(dto);
-}
+    @PutMapping("/change-profile") //atualizar nome e telefone
+    public ResponseEntity<UserDto> updateProfile(Authentication auth,
+            @Valid @RequestBody UpdateProfileRequest body) {
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = auth.getName();
+        UserModel user = users.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-public record UserDto(
-        java.util.UUID id,
-        String name,
-        String email,
-        String phone,
-        java.util.List<String> roles
-) {}
+        user.setName(body.name().trim());
+        if (body.phone() != null)
+            user.setPhone(body.phone().trim());
+        users.save(user);
 
+        var dto = new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRoles().stream().map(Enum::name).toList());
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(Authentication auth,
+            @Valid @RequestBody ChangePasswordRequest body) {
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = auth.getName();
+        UserModel user = users.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // valida senha atual
+        if (!passwordEncoder.matches(body.currentPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // aplica nova senha
+        user.setPassword(passwordEncoder.encode(body.newPassword()));
+        users.save(user);
+        return ResponseEntity.noContent().build();
+    }
 
     // ---------- DTOs ----------
     public record SignupRequest(
@@ -154,14 +186,37 @@ public record UserDto(
             @NotBlank String name,
             String phone,
             Set<SignupRole> roles // opcional: ADOTANTE, DOADOR
-    ) {}
+    ) {
+    }
 
     public record SigninRequest(
             @Email @NotBlank String email,
-            @NotBlank String password
-    ) {}
+            @NotBlank String password) {
+    }
 
-    public record AuthResponse(String accessToken) {}
+    public record AuthResponse(String accessToken) {
+    }
 
+    // ========= NOVOS DTOs =========
+    public record UserDto( // para o /me
+            java.util.UUID id,
+            String name,
+            String email,
+            String phone,
+            java.util.List<String> roles) {
+    }
+
+    public record UpdateProfileRequest(
+            @NotBlank String name,
+            String phone) {
+    }
+
+    public record ChangePasswordRequest(
+            @NotBlank String currentPassword,
+            @NotBlank @Size(min = 6, max = 100) String newPassword) {
+    }
+
+    public record RefreshResponse(String accessToken) {
+    }
 
 }

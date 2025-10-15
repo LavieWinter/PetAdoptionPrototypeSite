@@ -1,4 +1,4 @@
-package com.example.PetAdoption.dominio.servicos;
+package com.example.PetAdoption.servicos;
 
 import com.example.PetAdoption.dominio.InterfRepositories.UserRepository;
 import com.example.PetAdoption.dominio.auth.UsersDetails;
