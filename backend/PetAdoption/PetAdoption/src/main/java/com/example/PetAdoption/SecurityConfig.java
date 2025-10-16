@@ -1,4 +1,4 @@
-    package com.example.PetAdoption;
+package com.example.PetAdoption;
 
     import com.example.PetAdoption.dominio.auth.JwtAuthFilter;
     import jakarta.servlet.http.HttpServletResponse;
