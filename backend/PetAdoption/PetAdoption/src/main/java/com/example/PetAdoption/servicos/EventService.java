@@ -5,7 +5,7 @@ import com.example.PetAdoption.dominio.entidades.EventModel;
 import com.example.PetAdoption.dominio.enums.EventPhase;
 import com.example.PetAdoption.dominio.enums.EventType;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,6 +81,7 @@ public class EventService {
     }
 
     /** Remove um evento do pet. */
+     @Transactional
     public boolean delete(UUID petId, UUID eventId) {
         return events.delete(petId, eventId);
     }
