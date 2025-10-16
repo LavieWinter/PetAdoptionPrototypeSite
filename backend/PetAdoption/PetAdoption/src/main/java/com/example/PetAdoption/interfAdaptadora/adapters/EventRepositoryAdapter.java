@@ -39,21 +39,27 @@ public class EventRepositoryAdapter implements EventRepositoryPort {
 
     @Override
     public List<EventModel> findAll(UUID petId, EventType type, EventPhase phase,
-                                    int page, int size, String sortBy, boolean asc) {
+            int page, int size, String sortBy, boolean asc) {
         Sort sort = asc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        var pageRes =
-                (type != null && phase != null) ? repo.findAllByPetIdAndEventTypeAndPhase(petId, type, phase, pageable) :
-                (type != null)                   ? repo.findAllByPetIdAndEventType(petId, type, pageable) :
-                (phase != null)                  ? repo.findAllByPetIdAndPhase(petId, phase, pageable) :
-                                                   repo.findAllByPetId(petId, pageable);
+        var pageRes = (type != null && phase != null)
+                ? repo.findAllByPetIdAndEventTypeAndPhase(petId, type, phase, pageable)
+                : (type != null) ? repo.findAllByPetIdAndEventType(petId, type, pageable)
+                        : (phase != null) ? repo.findAllByPetIdAndPhase(petId, phase, pageable)
+                                : repo.findAllByPetId(petId, pageable);
 
         return pageRes.map(Event::toModel).toList();
     }
 
     @Override
     public boolean delete(UUID petId, UUID eventId) {
-        return repo.deleteByIdAndPetId(eventId, petId) > 0;
+        return repo.findByIdAndPetId(eventId, petId)
+                .map(e -> {
+                    repo.delete(e); // precisa de transação ativa
+                    return true;
+                })
+                .orElse(false);
     }
+
 }
