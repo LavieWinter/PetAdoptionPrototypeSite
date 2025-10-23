@@ -178,6 +178,19 @@ public class UserController {
         users.save(user);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/id")
+    public ResponseEntity<IdResponse> myId(Authentication auth) {
+        if (auth == null || auth.getName() == null) {
+            // mantém o tipo <IdResponse> para não estourar inferência do Optional
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return users.findByEmailIgnoreCase(auth.getName())
+                .map(u -> ResponseEntity.ok(new IdResponse(u.getId())))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+    }
+
+
 
     // ---------- DTOs ----------
     public record SignupRequest(
@@ -218,5 +231,8 @@ public class UserController {
 
     public record RefreshResponse(String accessToken) {
     }
+    
+    public record IdResponse(java.util.UUID id) {}
+
 
 }
