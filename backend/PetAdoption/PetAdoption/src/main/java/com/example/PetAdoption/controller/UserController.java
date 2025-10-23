@@ -64,9 +64,9 @@ public class UserController {
 
         // define roles efetivos
         Set<SignupRole> requested = Objects.requireNonNullElse(body.roles(), Set.of());
-        EnumSet<UserRoles> effective = EnumSet.of(UserRoles.ADOTANTE);
-        if (requested.contains(SignupRole.DOADOR)) {
-            effective.add(UserRoles.DOADOR);
+        EnumSet<UserRoles> effective = EnumSet.of(UserRoles.USER);
+        if (requested.contains(SignupRole.USER)) {
+            effective.add(UserRoles.USER);
         }
 
         // monta o usuário
