@@ -134,7 +134,21 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/change-profile") //atualizar nome e telefone
+    
+    public record IdDto(java.util.UUID id) {  //para retornar id
+    }
+
+    @GetMapping(value = "/testando", produces = "application/json") //retorna apenas o id
+    public ResponseEntity<IdDto> testando(Authentication auth) {
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        var user = users.findByEmailIgnoreCase(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return ResponseEntity.ok(new IdDto(user.getId()));
+    }
+
+    @PutMapping("/change-profile") // atualizar nome e telefone
     public ResponseEntity<UserDto> updateProfile(Authentication auth,
             @Valid @RequestBody UpdateProfileRequest body) {
         if (auth == null || auth.getName() == null) {

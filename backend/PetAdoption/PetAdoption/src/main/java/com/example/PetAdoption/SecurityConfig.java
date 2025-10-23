@@ -38,6 +38,7 @@ package com.example.PetAdoption;
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/me").authenticated()
+                    .requestMatchers("/api/auth/me3").authenticated()
                     .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/welcome").permitAll()
                     //.requestMatchers("/api/pets/**").permitAll()   // <— liberar temporariamente
                     .anyRequest().authenticated()
