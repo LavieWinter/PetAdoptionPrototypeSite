@@ -424,7 +424,7 @@ async function onSubmit() {
       password: form.value.password,
       name: `${form.value.firstName} ${form.value.lastName}`.trim(),
       phone: form.value.phone,
-      roles: ['DOADOR'] // opcional — backend já força ADOTANTE
+      roles: ['USER'] // opcional — backend já força ADOTANTE
       // demais campos ficam para uma futura rota de perfil/endereço
       // street, number, houseType, uf, city, cpf...
     }

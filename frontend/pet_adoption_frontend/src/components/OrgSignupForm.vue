@@ -26,7 +26,7 @@
       <!-- conteúdo -->
       <div class="d-flex align-center justify-space-between mb-4">
         <h2 class="text-h5 text-md-h6 text-high-emphasis mb-0">
-          {{ step === 1 ? 'Crie sua conta' : 'Informações pessoais' }}
+          {{ step === 1 ? 'Crie sua conta' : 'Informações da ONG' }}
         </h2>
 
         <!-- indicador simples de etapa -->
@@ -490,7 +490,7 @@ async function onSubmit() {
       password: form.value.password,
       name: `${form.value.firstName} ${form.value.lastName}`.trim(),
       phone: form.value.phone,
-      roles: ['DOADOR'] // opcional — backend já força ADOTANTE
+      roles: ['ADMIN'] // opcional — backend já força ADOTANTE
       // demais campos ficam para uma futura rota de perfil/endereço
       // street, number, houseType, uf, city, cpf...
     }
