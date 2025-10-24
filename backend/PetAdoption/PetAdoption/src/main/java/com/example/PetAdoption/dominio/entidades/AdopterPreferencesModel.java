@@ -1,53 +1,137 @@
 package com.example.PetAdoption.dominio.entidades;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
-/** Model de domínio: sem anotações de framework, não usa as próximas camadas  */
 public class AdopterPreferencesModel {
 
-    private UUID id;                 // preference_key
-    private UUID adopterId;          // FK -> user_admin.id
-
-    private String desiredSpecies;   // text
-    private String desiredSize;      // text
-
+    private UUID preferenceKey;
+    private UUID adopterId; // = user_admin.id
+    private String desiredSpecies;   // manter String p/ não acoplar enum do Pet
+    private String desiredSize;      // idem
     private Boolean acceptsSpecialNeeds;
     private Boolean acceptsOngoingTreatment;
     private Boolean acceptsChronicDisease;
     private Boolean hasOtherPets;
     private Boolean hasTimeForConstantCare;
+    private Instant updatedAt;
 
-    private OffsetDateTime updatedAt; // timestamptz
+    // === Construtores ===
+    public AdopterPreferencesModel() {
+    }
 
-    // Getters/Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public AdopterPreferencesModel(UUID preferenceKey, UUID adopterId, String desiredSpecies, String desiredSize,
+                                   Boolean acceptsSpecialNeeds, Boolean acceptsOngoingTreatment,
+                                   Boolean acceptsChronicDisease, Boolean hasOtherPets,
+                                   Boolean hasTimeForConstantCare, Instant updatedAt) {
+        this.preferenceKey = preferenceKey;
+        this.adopterId = adopterId;
+        this.desiredSpecies = desiredSpecies;
+        this.desiredSize = desiredSize;
+        this.acceptsSpecialNeeds = acceptsSpecialNeeds;
+        this.acceptsOngoingTreatment = acceptsOngoingTreatment;
+        this.acceptsChronicDisease = acceptsChronicDisease;
+        this.hasOtherPets = hasOtherPets;
+        this.hasTimeForConstantCare = hasTimeForConstantCare;
+        this.updatedAt = updatedAt;
+    }
 
-    public UUID getAdopterId() { return adopterId; }
-    public void setAdopterId(UUID adopterId) { this.adopterId = adopterId; }
+    // === Getters e Setters ===
 
-    public String getDesiredSpecies() { return desiredSpecies; }
-    public void setDesiredSpecies(String desiredSpecies) { this.desiredSpecies = desiredSpecies; }
+    public UUID getPreferenceKey() {
+        return preferenceKey;
+    }
 
-    public String getDesiredSize() { return desiredSize; }
-    public void setDesiredSize(String desiredSize) { this.desiredSize = desiredSize; }
+    public void setPreferenceKey(UUID preferenceKey) {
+        this.preferenceKey = preferenceKey;
+    }
 
-    public Boolean getAcceptsSpecialNeeds() { return acceptsSpecialNeeds; }
-    public void setAcceptsSpecialNeeds(Boolean acceptsSpecialNeeds) { this.acceptsSpecialNeeds = acceptsSpecialNeeds; }
+    public UUID getAdopterId() {
+        return adopterId;
+    }
 
-    public Boolean getAcceptsOngoingTreatment() { return acceptsOngoingTreatment; }
-    public void setAcceptsOngoingTreatment(Boolean acceptsOngoingTreatment) { this.acceptsOngoingTreatment = acceptsOngoingTreatment; }
+    public void setAdopterId(UUID adopterId) {
+        this.adopterId = adopterId;
+    }
 
-    public Boolean getAcceptsChronicDisease() { return acceptsChronicDisease; }
-    public void setAcceptsChronicDisease(Boolean acceptsChronicDisease) { this.acceptsChronicDisease = acceptsChronicDisease; }
+    public String getDesiredSpecies() {
+        return desiredSpecies;
+    }
 
-    public Boolean getHasOtherPets() { return hasOtherPets; }
-    public void setHasOtherPets(Boolean hasOtherPets) { this.hasOtherPets = hasOtherPets; }
+    public void setDesiredSpecies(String desiredSpecies) {
+        this.desiredSpecies = desiredSpecies;
+    }
 
-    public Boolean getHasTimeForConstantCare() { return hasTimeForConstantCare; }
-    public void setHasTimeForConstantCare(Boolean hasTimeForConstantCare) { this.hasTimeForConstantCare = hasTimeForConstantCare; }
+    public String getDesiredSize() {
+        return desiredSize;
+    }
 
-    public OffsetDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setDesiredSize(String desiredSize) {
+        this.desiredSize = desiredSize;
+    }
+
+    public Boolean getAcceptsSpecialNeeds() {
+        return acceptsSpecialNeeds;
+    }
+
+    public void setAcceptsSpecialNeeds(Boolean acceptsSpecialNeeds) {
+        this.acceptsSpecialNeeds = acceptsSpecialNeeds;
+    }
+
+    public Boolean getAcceptsOngoingTreatment() {
+        return acceptsOngoingTreatment;
+    }
+
+    public void setAcceptsOngoingTreatment(Boolean acceptsOngoingTreatment) {
+        this.acceptsOngoingTreatment = acceptsOngoingTreatment;
+    }
+
+    public Boolean getAcceptsChronicDisease() {
+        return acceptsChronicDisease;
+    }
+
+    public void setAcceptsChronicDisease(Boolean acceptsChronicDisease) {
+        this.acceptsChronicDisease = acceptsChronicDisease;
+    }
+
+    public Boolean getHasOtherPets() {
+        return hasOtherPets;
+    }
+
+    public void setHasOtherPets(Boolean hasOtherPets) {
+        this.hasOtherPets = hasOtherPets;
+    }
+
+    public Boolean getHasTimeForConstantCare() {
+        return hasTimeForConstantCare;
+    }
+
+    public void setHasTimeForConstantCare(Boolean hasTimeForConstantCare) {
+        this.hasTimeForConstantCare = hasTimeForConstantCare;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // === toString (útil para debug/logs) ===
+    @Override
+    public String toString() {
+        return "AdopterPreferencesModel{" +
+                "preferenceKey=" + preferenceKey +
+                ", adopterId=" + adopterId +
+                ", desiredSpecies='" + desiredSpecies + '\'' +
+                ", desiredSize='" + desiredSize + '\'' +
+                ", acceptsSpecialNeeds=" + acceptsSpecialNeeds +
+                ", acceptsOngoingTreatment=" + acceptsOngoingTreatment +
+                ", acceptsChronicDisease=" + acceptsChronicDisease +
+                ", hasOtherPets=" + hasOtherPets +
+                ", hasTimeForConstantCare=" + hasTimeForConstantCare +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }
