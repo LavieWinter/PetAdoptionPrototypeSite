@@ -2,7 +2,7 @@ package com.example.PetAdoption.dominio.entidades;
 
 import java.util.UUID;
 
-public class PetRecommendationModel {
+public class PetRecommendation {
     private UUID petId;
     private String name;
     private String species;

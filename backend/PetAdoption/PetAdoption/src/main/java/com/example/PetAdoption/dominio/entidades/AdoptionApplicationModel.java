@@ -1,54 +1,45 @@
 package com.example.PetAdoption.dominio.entidades;
+
+
 import com.example.PetAdoption.dominio.enums.ApplicationStatus;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
-/** Domain Model: sem anotações de framework. */
 public class AdoptionApplicationModel {
-
     private UUID id;
-    private UUID adopterId;                 // user_admin.id
-    private UUID petId;                     // pets.id
+    private UUID adopterId;
+    private UUID petId;
 
-    private ApplicationStatus status = ApplicationStatus.DRAFT;
-    private Boolean useDefaultPreferences = Boolean.TRUE;
-    private OffsetDateTime submittedAt;
+    private ApplicationStatus status;
+    private Boolean useDefaultPreferences;
 
-    private UUID reviewedById;              // user_admin.id (opcional)
+    private Instant submittedAt;
+    private UUID reviewedBy;
     private String reviewNotes;
 
-    private OffsetDateTime createdAt;
-    private OffsetDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    // ---- getters/setters ----
+    // Getters/Setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
-
     public UUID getAdopterId() { return adopterId; }
     public void setAdopterId(UUID adopterId) { this.adopterId = adopterId; }
-
     public UUID getPetId() { return petId; }
     public void setPetId(UUID petId) { this.petId = petId; }
-
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
-
     public Boolean getUseDefaultPreferences() { return useDefaultPreferences; }
     public void setUseDefaultPreferences(Boolean useDefaultPreferences) { this.useDefaultPreferences = useDefaultPreferences; }
-
-    public OffsetDateTime getSubmittedAt() { return submittedAt; }
-    public void setSubmittedAt(OffsetDateTime submittedAt) { this.submittedAt = submittedAt; }
-
-    public UUID getReviewedById() { return reviewedById; }
-    public void setReviewedById(UUID reviewedById) { this.reviewedById = reviewedById; }
-
+    public Instant getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(Instant submittedAt) { this.submittedAt = submittedAt; }
+    public UUID getReviewedBy() { return reviewedBy; }
+    public void setReviewedBy(UUID reviewedBy) { this.reviewedBy = reviewedBy; }
     public String getReviewNotes() { return reviewNotes; }
     public void setReviewNotes(String reviewNotes) { this.reviewNotes = reviewNotes; }
-
-    public OffsetDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
-
-    public OffsetDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }
