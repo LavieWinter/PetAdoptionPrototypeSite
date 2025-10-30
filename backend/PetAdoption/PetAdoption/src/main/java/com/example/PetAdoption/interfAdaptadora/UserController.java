@@ -60,14 +60,12 @@ public class UserController {
         if (users.existsByEmailIgnoreCase(email)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new AuthResponse("This email is already registered"));
-
         }
 
-        // define roles efetivos
-        Set<SignupRole> requested = Objects.requireNonNullElse(body.roles(), Set.of());
-        EnumSet<UserRoles> effective = EnumSet.of(UserRoles.USER);
-        if (requested.contains(SignupRole.USER)) {
-            effective.add(UserRoles.USER);
+        // depois 
+        EnumSet<UserRoles> effective = EnumSet.of(UserRoles.USER); // todo mundo tem USER
+        if (body.roles() != null && body.roles().contains(SignupRole.ADMIN)) {
+            effective.add(UserRoles.ADMIN); // adiciona ADMIN se o cliente pedir
         }
 
         // monta o usuário
@@ -79,10 +77,10 @@ public class UserController {
         }
         u.setPassword(passwordEncoder.encode(body.password()));
 
-        // aplique os roles ANTES de salvar
+        // aplica roles ANTES de salvar
         effective.forEach(u::addRole);
 
-        // salva UMA vez (User + user_roles)
+        // salva (user_admin + user_roles)
         users.save(u);
 
         // gera o token
@@ -134,11 +132,10 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    
-    public record IdDto(java.util.UUID id) {  //para retornar id
+    public record IdDto(java.util.UUID id) { // para retornar id
     }
 
-    @GetMapping(value = "/testando", produces = "application/json") //retorna apenas o id
+    @GetMapping(value = "/testando", produces = "application/json") // retorna apenas o id
     public ResponseEntity<IdDto> testando(Authentication auth) {
         if (auth == null || auth.getName() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -192,6 +189,7 @@ public class UserController {
         users.save(user);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/id")
     public ResponseEntity<IdResponse> myId(Authentication auth) {
         if (auth == null || auth.getName() == null) {
@@ -204,15 +202,13 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
     }
 
-
-
     // ---------- DTOs ----------
     public record SignupRequest(
             @Email @NotBlank String email,
             @NotBlank @Size(min = 6, max = 100) String password,
             @NotBlank String name,
             String phone,
-            Set<SignupRole> roles // opcional: ADOTANTE, DOADOR
+            Set<SignupRole> roles // agora aceita: USER, ADMIN (e outros que você tiver)
     ) {
     }
 
@@ -245,8 +241,8 @@ public class UserController {
 
     public record RefreshResponse(String accessToken) {
     }
-    
-    public record IdResponse(java.util.UUID id) {}
 
+    public record IdResponse(java.util.UUID id) {
+    }
 
 }
