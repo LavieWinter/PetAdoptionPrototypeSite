@@ -1,6 +1,7 @@
 package com.example.PetAdoption.dominio.InterfRepositories;
 
 import com.example.PetAdoption.dominio.entidades.UserModel;
+import org.hibernate.annotations.processing.SQL;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

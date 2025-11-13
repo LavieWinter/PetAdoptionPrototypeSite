@@ -40,7 +40,8 @@ package com.example.PetAdoption;
                     .requestMatchers("/api/auth/me").authenticated()
                     .requestMatchers("/api/auth/me3").authenticated()
                     .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/welcome").permitAll()
-                    //.requestMatchers("/api/pets/**").permitAll()   // <— liberar temporariamente
+                    .requestMatchers("/api/**").permitAll()   // <— liberar temporariamente
+                    .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
