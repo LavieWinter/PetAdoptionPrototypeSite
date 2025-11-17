@@ -25,7 +25,7 @@ public class UsersDetails implements UserDetails {
         this.password = userModel.getPassword();
         this.authorities = Stream.of(userModel.getRoles())
                 .map(
-                        role -> new SimpleGrantedAuthority(role.toString())  // Convert each role to GrantedAuthority
+                        role -> new SimpleGrantedAuthority("ROLE_" + role.toString())  // Convert each role to GrantedAuthority
                 )
                 .collect(Collectors.toList());
     }
@@ -43,7 +43,7 @@ public class UsersDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Return authorities if needed, e.g., roles or permissions
-        return Collections.emptyList();
+        return authorities;
     }
 
     @Override

@@ -38,15 +38,14 @@ package com.example.PetAdoption;
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/me").authenticated()
-                    .requestMatchers("/api/auth/me3").authenticated()
-                    .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/welcome").permitAll()
-                    .requestMatchers("/api/**").permitAll()   // <— liberar temporariamente
+                    .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                    //.requestMatchers("/api/**").permitAll()   // <— liberar temporariamente
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authenticationProvider(authenticationProvider)
-                    .addFilterAfter(jwtAuthFilter, org.springframework.web.filter.CorsFilter.class)
+                    //.addFilterAfter(jwtAuthFilter, org.springframework.web.filter.CorsFilter.class)
                     .addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                     .authenticationEntryPoint((req, res, e) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
@@ -73,7 +72,7 @@ package com.example.PetAdoption;
         public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
             DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
             provider.setUserDetailsService(userDetailsService);
-            provider.setPasswordEncoder(passwordEncoder());
+            provider.setPasswordEncoder(passwordEncoder);
             return provider;
         }
 

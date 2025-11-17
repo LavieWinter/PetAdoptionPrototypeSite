@@ -1,5 +1,6 @@
 package com.example.PetAdoption.dominio.auth;
 
+import com.example.PetAdoption.dominio.enums.UserRoles;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class JwtService {
@@ -30,10 +31,14 @@ public class JwtService {
         this.expirationMillis = expirationMillis;
     }
 
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String email, Collection<UserRoles> roles) {
         Instant now = Instant.now();
         Instant expiration = now.plusMillis(expirationMillis);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        claims.put("roles", roles);
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiration))
@@ -70,5 +75,20 @@ public class JwtService {
     public String extractToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         return resolveBearerToken(authorizationHeader);
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        Object rolesObj = claims.get("roles");
+        if (rolesObj instanceof Collection<?>) {
+            return ((Collection<?>) rolesObj).stream()
+                    .map(Object::toString)
+                    .toList();
+        }
+        return List.of();
     }
 }
