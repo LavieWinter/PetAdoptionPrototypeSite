@@ -9,6 +9,7 @@ public class ApplicationPreferencesModel {
 
     private String desiredSpecies;
     private String desiredSize;
+    private String petGender;
 
     private Boolean acceptsSpecialNeeds;
     private Boolean acceptsOngoingTreatment;
@@ -28,6 +29,9 @@ public class ApplicationPreferencesModel {
 
     public String getDesiredSize() { return desiredSize; }
     public void setDesiredSize(String desiredSize) { this.desiredSize = desiredSize; }
+
+    public String getPetGender() { return petGender; }
+    public void setPetGender(String petGender) { this.petGender = petGender; }
 
     public Boolean getAcceptsSpecialNeeds() { return acceptsSpecialNeeds; }
     public void setAcceptsSpecialNeeds(Boolean acceptsSpecialNeeds) { this.acceptsSpecialNeeds = acceptsSpecialNeeds; }

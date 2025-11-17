@@ -124,6 +124,12 @@ BEGIN
       PERFORM _add_check_if_missing('public','application_preferences','chk_ap_aceite_necessidades_enum',
         $$ aceite_necessidades IN ('ACEITA_NECESSIDADES_OU_TRATAMENTO','SOMENTE_SEM_NECESSIDADES') $$);
     END IF;
+
+    IF EXISTS (SELECT 1 FROM information_schema.columns
+               WHERE table_schema='public' AND table_name='application_preferences' AND column_name='pet_gender') THEN
+      PERFORM _add_check_if_missing('public','application_preferences','chk_ap_pet_gender_enum',
+        $$ pet_gender IN ('M','F') $$);
+    END IF;
   END IF;
 
   /* =======================
@@ -155,6 +161,12 @@ BEGIN
                WHERE table_schema='public' AND table_name='adopter_preferences' AND column_name='aceite_necessidades') THEN
       PERFORM _add_check_if_missing('public','adopter_preferences','chk_dp_aceite_necessidades_enum',
         $$ aceite_necessidades IN ('ACEITA_NECESSIDADES_OU_TRATAMENTO','SOMENTE_SEM_NECESSIDADES') $$);
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM information_schema.columns
+               WHERE table_schema='public' AND table_name='adopter_preferences' AND column_name='pet_gender') THEN
+      PERFORM _add_check_if_missing('public','adopter_preferences','chk_dp_pet_gender_enum',
+        $$ pet_gender IN ('M','F') $$);
     END IF;
   END IF;
 

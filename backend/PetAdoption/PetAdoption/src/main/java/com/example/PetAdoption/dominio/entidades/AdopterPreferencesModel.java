@@ -9,6 +9,7 @@ public class AdopterPreferencesModel {
     private UUID adopterId; // = user_admin.id
     private String desiredSpecies;   // manter String p/ não acoplar enum do Pet
     private String desiredSize;      // idem
+    private String petGender;
     private Boolean acceptsSpecialNeeds;
     private Boolean acceptsOngoingTreatment;
     private Boolean acceptsChronicDisease;
@@ -20,7 +21,7 @@ public class AdopterPreferencesModel {
     public AdopterPreferencesModel() {
     }
 
-    public AdopterPreferencesModel(UUID preferenceKey, UUID adopterId, String desiredSpecies, String desiredSize,
+    public AdopterPreferencesModel(UUID preferenceKey, UUID adopterId, String desiredSpecies, String desiredSize, String petGender,
                                    Boolean acceptsSpecialNeeds, Boolean acceptsOngoingTreatment,
                                    Boolean acceptsChronicDisease, Boolean hasOtherPets,
                                    Boolean hasTimeForConstantCare, Instant updatedAt) {
@@ -28,6 +29,7 @@ public class AdopterPreferencesModel {
         this.adopterId = adopterId;
         this.desiredSpecies = desiredSpecies;
         this.desiredSize = desiredSize;
+        this.petGender = petGender;
         this.acceptsSpecialNeeds = acceptsSpecialNeeds;
         this.acceptsOngoingTreatment = acceptsOngoingTreatment;
         this.acceptsChronicDisease = acceptsChronicDisease;
@@ -110,6 +112,9 @@ public class AdopterPreferencesModel {
         this.hasTimeForConstantCare = hasTimeForConstantCare;
     }
 
+    public String getPetGender() { return petGender; }
+    public void setPetGender(String petGender) { this.petGender = petGender; }
+
     public Instant getUpdatedAt() {
         return updatedAt;
     }
@@ -126,6 +131,7 @@ public class AdopterPreferencesModel {
                 ", adopterId=" + adopterId +
                 ", desiredSpecies='" + desiredSpecies + '\'' +
                 ", desiredSize='" + desiredSize + '\'' +
+                ", petGender='" + petGender + '\'' +
                 ", acceptsSpecialNeeds=" + acceptsSpecialNeeds +
                 ", acceptsOngoingTreatment=" + acceptsOngoingTreatment +
                 ", acceptsChronicDisease=" + acceptsChronicDisease +

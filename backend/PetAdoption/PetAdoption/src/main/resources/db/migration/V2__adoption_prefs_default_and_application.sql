@@ -11,6 +11,7 @@ COMMENT ON TABLE adopter_preferences IS
 CREATE TABLE IF NOT EXISTS application_preferences (
   application_id             UUID PRIMARY KEY
   REFERENCES adoption_applications(id) ON DELETE CASCADE,
+  pet_gender                 TEXT,
   desired_species            TEXT,
   desired_size               TEXT,
   accepts_special_needs      BOOLEAN,
@@ -29,6 +30,10 @@ ALTER TABLE adoption_applications
 COMMENT ON COLUMN adoption_applications.use_default_preferences IS
   'If TRUE, clone defaults from adopter_preferences into application_preferences upon application creation.';
 
+-- Ensure adopter_preferences can carry pet_gender (added as nullable text)
+ALTER TABLE adopter_preferences
+  ADD COLUMN IF NOT EXISTS pet_gender TEXT;
+
 -- 4) Trigger: copy defaults into application on INSERT when requested
 CREATE OR REPLACE FUNCTION copy_default_prefs_to_application() RETURNS trigger AS $$
 DECLARE
@@ -45,6 +50,7 @@ BEGIN
     IF FOUND THEN
       INSERT INTO application_preferences (
         application_id,
+        pet_gender,
         desired_species,
         desired_size,
         accepts_special_needs,
@@ -55,6 +61,7 @@ BEGIN
       )
       VALUES (
         NEW.id,
+        def_rec.pet_gender,
         def_rec.desired_species,
         def_rec.desired_size,
         def_rec.accepts_special_needs,
@@ -80,6 +87,7 @@ EXECUTE FUNCTION copy_default_prefs_to_application();
 -- 5) Optional backfill for existing rows with the flag ON
 INSERT INTO application_preferences (
   application_id,
+  pet_gender,
   desired_species,
   desired_size,
   accepts_special_needs,
@@ -89,6 +97,7 @@ INSERT INTO application_preferences (
   has_time_for_constant_care
 )
 SELECT a.id,
+      d.pet_gender,
       d.desired_species,
       d.desired_size,
       d.accepts_special_needs,

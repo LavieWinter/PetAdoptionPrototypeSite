@@ -33,6 +33,7 @@ public class AdopterPreferencesService {
         // merge dos campos (parcial/total, conforme tua preferência)
         toSave.setDesiredSpecies(incoming.getDesiredSpecies());
         toSave.setDesiredSize(incoming.getDesiredSize());
+        toSave.setPetGender(incoming.getPetGender());
         toSave.setAcceptsSpecialNeeds(incoming.getAcceptsSpecialNeeds());
         toSave.setAcceptsOngoingTreatment(incoming.getAcceptsOngoingTreatment());
         toSave.setAcceptsChronicDisease(incoming.getAcceptsChronicDisease());
