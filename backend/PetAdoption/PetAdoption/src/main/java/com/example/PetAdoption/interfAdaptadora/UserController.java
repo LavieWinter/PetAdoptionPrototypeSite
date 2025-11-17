@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,6 +49,7 @@ public class UserController {
         this.blacklist = blacklist;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome to the Pet Adoption API!";
@@ -84,7 +86,7 @@ public class UserController {
         users.save(u);
 
         // gera o token
-        String token = jwtService.generateAccessToken(u.getEmail());
+        String token = jwtService.generateAccessToken(u.getEmail(), u.getRoles());
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
@@ -99,7 +101,13 @@ public class UserController {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         body.email().trim().toLowerCase(), body.password()));
-        String token = jwtService.generateAccessToken(auth.getName());
+
+        // Load full user to get roles
+        var user = users.findByEmailIgnoreCase(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // Generate a token that contains roles (e.g., ["USER","ADMIN"])
+        String token = jwtService.generateAccessToken(user.getEmail(), user.getRoles());
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         return ResponseEntity.ok().headers(headers).body(new AuthResponse(token));
