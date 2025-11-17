@@ -18,6 +18,9 @@ public class ApplicationPreferences {
     @Column(name = "desired_size")
     private String desiredSize;
 
+    @Column(name = "pet_gender")
+    private String petGender;
+
     @Column(name = "accepts_special_needs")
     private Boolean acceptsSpecialNeeds;
 
@@ -51,6 +54,7 @@ public class ApplicationPreferences {
     public UUID getApplicationId() { return applicationId; }
     public String getDesiredSpecies() { return desiredSpecies; }
     public String getDesiredSize() { return desiredSize; }
+    public String getPetGender() { return petGender; }
     public Boolean getAcceptsSpecialNeeds() { return acceptsSpecialNeeds; }
     public Boolean getAcceptsOngoingTreatment() { return acceptsOngoingTreatment; }
     public Boolean getAcceptsChronicDisease() { return acceptsChronicDisease; }
@@ -64,6 +68,7 @@ public class ApplicationPreferences {
         if (m == null) return null;
         var e = new ApplicationPreferences();
         e.applicationId = m.getApplicationId();
+        e.petGender = m.getPetGender();
         e.desiredSpecies = m.getDesiredSpecies();
         e.desiredSize = m.getDesiredSize();
         e.acceptsSpecialNeeds = m.getAcceptsSpecialNeeds();
@@ -80,6 +85,7 @@ public class ApplicationPreferences {
         if (e == null) return null;
         var m = new ApplicationPreferencesModel();
         m.setApplicationId(e.applicationId);
+        m.setPetGender(e.petGender);
         m.setDesiredSpecies(e.desiredSpecies);
         m.setDesiredSize(e.desiredSize);
         m.setAcceptsSpecialNeeds(e.acceptsSpecialNeeds);

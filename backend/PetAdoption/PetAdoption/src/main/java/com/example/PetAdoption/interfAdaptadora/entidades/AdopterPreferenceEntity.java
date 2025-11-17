@@ -23,6 +23,9 @@ public class AdopterPreferenceEntity {
     @Column(name = "desired_size")
     private String desiredSize;
 
+    @Column(name = "pet_gender")
+    private String petGender;
+
     @Column(name = "accepts_special_needs")
     private Boolean acceptsSpecialNeeds;
 
@@ -51,6 +54,7 @@ public class AdopterPreferenceEntity {
                                    UUID adopterId,
                                    String desiredSpecies,
                                    String desiredSize,
+                                   String petGender,
                                    Boolean acceptsSpecialNeeds,
                                    Boolean acceptsOngoingTreatment,
                                    Boolean acceptsChronicDisease,
@@ -61,6 +65,7 @@ public class AdopterPreferenceEntity {
         this.adopterId = adopterId;
         this.desiredSpecies = desiredSpecies;
         this.desiredSize = desiredSize;
+        this.petGender = petGender;
         this.acceptsSpecialNeeds = acceptsSpecialNeeds;
         this.acceptsOngoingTreatment = acceptsOngoingTreatment;
         this.acceptsChronicDisease = acceptsChronicDisease;
@@ -178,6 +183,7 @@ public class AdopterPreferenceEntity {
                 m.getAdopterId(),
                 m.getDesiredSpecies(),
                 m.getDesiredSize(),
+                m.getPetGender(),
                 m.getAcceptsSpecialNeeds(),
                 m.getAcceptsOngoingTreatment(),
                 m.getAcceptsChronicDisease(),
@@ -194,6 +200,7 @@ public class AdopterPreferenceEntity {
         m.setAdopterId(this.adopterId);
         m.setDesiredSpecies(this.desiredSpecies);
         m.setDesiredSize(this.desiredSize);
+        m.setPetGender(this.petGender);
         m.setAcceptsSpecialNeeds(this.acceptsSpecialNeeds);
         m.setAcceptsOngoingTreatment(this.acceptsOngoingTreatment);
         m.setAcceptsChronicDisease(this.acceptsChronicDisease);
@@ -210,6 +217,7 @@ public class AdopterPreferenceEntity {
                 ", adopterId=" + adopterId +
                 ", desiredSpecies='" + desiredSpecies + '\'' +
                 ", desiredSize='" + desiredSize + '\'' +
+                ", petGender='" + petGender + '\'' +
                 ", acceptsSpecialNeeds=" + acceptsSpecialNeeds +
                 ", acceptsOngoingTreatment=" + acceptsOngoingTreatment +
                 ", acceptsChronicDisease=" + acceptsChronicDisease +

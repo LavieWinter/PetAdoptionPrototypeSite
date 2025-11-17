@@ -88,6 +88,7 @@ public class AdopterPreferencesController {
         AdopterPreferencesModel m = new AdopterPreferencesModel();
         m.setDesiredSpecies(r.desiredSpecies);
         m.setDesiredSize(r.desiredSize);
+        m.setPetGender(r.petGender);
         m.setAcceptsSpecialNeeds(r.acceptsSpecialNeeds);
         m.setAcceptsOngoingTreatment(r.acceptsOngoingTreatment);
         m.setAcceptsChronicDisease(r.acceptsChronicDisease);
@@ -102,6 +103,7 @@ public class AdopterPreferencesController {
         out.adopterId = m.getAdopterId() != null ? m.getAdopterId().toString() : null;
         out.desiredSpecies = m.getDesiredSpecies();
         out.desiredSize = m.getDesiredSize();
+        out.petGender = m.getPetGender();
         out.acceptsSpecialNeeds = m.getAcceptsSpecialNeeds();
         out.acceptsOngoingTreatment = m.getAcceptsOngoingTreatment();
         out.acceptsChronicDisease = m.getAcceptsChronicDisease();
@@ -120,6 +122,9 @@ public class AdopterPreferencesController {
         @Size(max = 20)
         public String desiredSize;    // "SMALL","MEDIUM","LARGE",...
 
+        @Size(max = 4)
+        public String petGender; // 'M' or 'F'
+
         public Boolean acceptsSpecialNeeds;
         public Boolean acceptsOngoingTreatment;
         public Boolean acceptsChronicDisease;
@@ -132,6 +137,7 @@ public class AdopterPreferencesController {
         public String adopterId;
         public String desiredSpecies;
         public String desiredSize;
+        public String petGender;
         public Boolean acceptsSpecialNeeds;
         public Boolean acceptsOngoingTreatment;
         public Boolean acceptsChronicDisease;
