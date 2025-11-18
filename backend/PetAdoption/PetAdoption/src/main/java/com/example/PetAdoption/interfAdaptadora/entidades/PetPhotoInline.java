@@ -3,12 +3,12 @@ package com.example.PetAdoption.interfAdaptadora.entidades;
 import com.example.PetAdoption.dominio.entidades.PetPhotoInlineModel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+// Entity mapping removed: table `pet_photos_inline` will be dropped by migration V4.
+// This class is kept as a POJO converter for legacy uses; it is no longer a JPA entity.
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "pet_photos_inline")
 public class PetPhotoInline {
 
     @Id

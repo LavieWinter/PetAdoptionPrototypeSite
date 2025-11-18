@@ -66,6 +66,12 @@ public class Pet {
     @Column(name = "updated_at", columnDefinition = "timestamptz")
     private OffsetDateTime updatedAt;
 
+    @Column(name = "pet_description")
+    private String petDescription;
+
+    @Column(name = "pet_image")
+    private String petImage;
+
     // ===== Lifecycle =====
     @PrePersist
     void onCreate() {
@@ -130,6 +136,12 @@ public class Pet {
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 
+    public String getPetDescription() { return petDescription; }
+    public void setPetDescription(String petDescription) { this.petDescription = petDescription; }
+
+    public String getPetImage() { return petImage; }
+    public void setPetImage(String petImage) { this.petImage = petImage; }
+
     // ======= Mapper embutido =======
 
     /** Converte Domain Model -> Entity JPA */
@@ -151,6 +163,8 @@ public class Pet {
         e.setRequiresConstantCare(m.getRequiresConstantCare());
         e.setRegisteredDate(m.getRegisteredDate());
         e.setRescuedAt(m.getRescuedAt());
+        e.setPetDescription(m.getPetDescription());
+        e.setPetImage(m.getPetImage());
         e.setCreatedAt(m.getCreatedAt());
         e.setUpdatedAt(m.getUpdatedAt());
         return e;
@@ -175,6 +189,8 @@ public class Pet {
         m.setRequiresConstantCare(e.getRequiresConstantCare());
         m.setRegisteredDate(e.getRegisteredDate());
         m.setRescuedAt(e.getRescuedAt());
+        m.setPetDescription(e.getPetDescription());
+        m.setPetImage(e.getPetImage());
         m.setCreatedAt(e.getCreatedAt());
         m.setUpdatedAt(e.getUpdatedAt());
         return m;

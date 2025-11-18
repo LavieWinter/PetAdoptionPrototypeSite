@@ -38,6 +38,8 @@ public class PetController {
         public String  hasChronicDisease;
         public Boolean goodWithOtherAnimals;
         public Boolean requiresConstantCare;
+        public String petDescription;
+        public String petImage;
         public LocalDate registeredDate;
         public LocalDate rescuedAt;
 
@@ -57,6 +59,8 @@ public class PetController {
             p.setHasChronicDisease(this.hasChronicDisease);
             p.setGoodWithOtherAnimals(this.goodWithOtherAnimals);
             p.setRequiresConstantCare(this.requiresConstantCare);
+            p.setPetDescription(this.petDescription);
+            p.setPetImage(this.petImage);
             p.setRegisteredDate(this.registeredDate);
             p.setRescuedAt(this.rescuedAt);
             return p;
@@ -76,6 +80,8 @@ public class PetController {
             if (this.hasChronicDisease != null) target.setHasChronicDisease(this.hasChronicDisease);
             if (this.goodWithOtherAnimals != null) target.setGoodWithOtherAnimals(this.goodWithOtherAnimals);
             if (this.requiresConstantCare != null) target.setRequiresConstantCare(this.requiresConstantCare);
+            if (this.petDescription != null) target.setPetDescription(this.petDescription);
+            if (this.petImage != null) target.setPetImage(this.petImage);
             if (this.registeredDate != null) target.setRegisteredDate(this.registeredDate);
             if (this.rescuedAt != null) target.setRescuedAt(this.rescuedAt);
         }
@@ -96,6 +102,8 @@ public class PetController {
         public String  hasChronicDisease;
         public Boolean goodWithOtherAnimals;
         public Boolean requiresConstantCare;
+        public String petDescription;
+        public String petImage;
         public LocalDate registeredDate;
         public LocalDate rescuedAt;
         public OffsetDateTime createdAt;
@@ -117,6 +125,8 @@ public class PetController {
             r.hasChronicDisease = p.getHasChronicDisease();
             r.goodWithOtherAnimals = p.getGoodWithOtherAnimals();
             r.requiresConstantCare = p.getRequiresConstantCare();
+            r.petDescription = p.getPetDescription();
+            r.petImage = p.getPetImage();
             r.registeredDate = p.getRegisteredDate();
             r.rescuedAt = p.getRescuedAt();
             r.createdAt = p.getCreatedAt();
