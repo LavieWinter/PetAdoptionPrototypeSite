@@ -1,16 +1,35 @@
 # backend/Dockerfile
+# ============================
+# Estágio 1: Build com Maven
+# ============================
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
-# Estágio de Build: Compila a aplicação com Maven
-FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+
+# Copia somente o pom para baixar dependências com cache
 COPY pom.xml .
-RUN mvn dependency:go-offline
-COPY src ./src
-RUN mvn clean package -DskipTests
 
-# Estágio Final: Executa a aplicação
-FROM openjdk:17-jdk-slim
+# Baixa dependências (opcional mas ajuda na cache de builds)
+RUN mvn -B dependency:go-offline
+
+# Agora copia o código fonte
+COPY src ./src
+
+# Gera o JAR (sem rodar testes)
+RUN mvn -B clean package -DskipTests
+
+# ============================
+# Estágio 2: Runtime
+# ============================
+FROM eclipse-temurin:17-jre-jammy
+
 WORKDIR /app
+
+# Copia o JAR gerado no estágio de build
 COPY --from=build /app/target/*.jar app.jar
+
+# Porta padrão do Spring Boot
 EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

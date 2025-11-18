@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432" # Expõe a porta para acesso externo (ex: DBeaver)
+      - "5433:5432" # Expõe a porta para acesso externo (ex: DBeaver)
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
