@@ -165,13 +165,14 @@ async function onLogin() {
   successMsg.value = ''
   loading.value = true
   try {
-    // await login(form.value.email.trim().toLowerCase(), form.value.password)
+    //await login(form.value.email.trim().toLowerCase(), form.value.password)
     await store.dispatch('user/login', {
       email: form.value.email.trim().toLowerCase(),
       password: form.value.password
     })
-    outer.push('/')
+    router.push('/')
   } catch (err) {
+    console.log(err)
     errorMsg.value = mapError(err)
   } finally {
     loading.value = false

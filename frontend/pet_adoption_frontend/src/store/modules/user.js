@@ -48,7 +48,7 @@ export default {
                 const data = await apiLogin(email, password)
                 // token já foi salvo pelo service; sincroniza local
                 commit('SET_TOKEN', localStorage.getItem(TOKEN_KEY) || '')
-                await dispatch('fetchProfile')
+                //await dispatch('fetchProfile')
                 return data
             } finally {
                 commit('SET_LOADING', false)
