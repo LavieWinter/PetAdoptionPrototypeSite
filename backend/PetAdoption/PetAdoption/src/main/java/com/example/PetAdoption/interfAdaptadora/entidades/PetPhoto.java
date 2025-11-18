@@ -2,13 +2,13 @@ package com.example.PetAdoption.interfAdaptadora.entidades;
 
 import com.example.PetAdoption.dominio.entidades.PetPhotoModel;
 import jakarta.persistence.*;
+// Entity mapping removed: table `pet_photos` will be dropped by migration V4.
+// This class is kept as a POJO converter for legacy uses; it is no longer a JPA entity.
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "pet_photos")
 public class PetPhoto {
 
     @Id

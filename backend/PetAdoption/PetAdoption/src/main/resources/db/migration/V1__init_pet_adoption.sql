@@ -80,6 +80,8 @@ CREATE TABLE IF NOT EXISTS pets (
   rescued_at      DATE,
   created_at      TIMESTAMPTZ,
   updated_at      TIMESTAMPTZ,
+  pet_description TEXT,
+  pet_image       TEXT,
   CONSTRAINT fk_pets_rescuer
     FOREIGN KEY (rescued_by_id) REFERENCES user_admin(id)
 );
@@ -150,36 +152,4 @@ CREATE TABLE IF NOT EXISTS events (
     FOREIGN KEY (adoption_id) REFERENCES adoptions(id)
 );
 
--- ========== PET_PHOTOS (metadata + external storage reference) ==========
-CREATE TABLE IF NOT EXISTS pet_photos (
-  id               UUID PRIMARY KEY,
-  pet_id           UUID NOT NULL REFERENCES pets(id) ON DELETE CASCADE,
-  storage_provider TEXT NOT NULL CHECK (storage_provider IN ('S3','GCS','AZURE','LOCAL','R2')),
-  object_key       TEXT NOT NULL,
-  public_url       TEXT,
-  mime_type        TEXT NOT NULL,
-  width_px         INT,
-  height_px        INT,
-  size_bytes       BIGINT,
-  checksum_sha256  BYTEA,
-  is_primary       BOOLEAN NOT NULL DEFAULT FALSE,
-  sort_order       INT NOT NULL DEFAULT 0,
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS uq_pet_photos_primary ON pet_photos(pet_id) WHERE is_primary;
-CREATE INDEX IF NOT EXISTS idx_pet_photos_pet ON pet_photos(pet_id, sort_order);
-
--- ========== PET_PHOTOS_INLINE (optional inline image) ==========
-CREATE TABLE IF NOT EXISTS pet_photos_inline (
-  id          UUID PRIMARY KEY,
-  pet_id      UUID NOT NULL REFERENCES pets(id) ON DELETE CASCADE,
-  mime_type   TEXT NOT NULL,
-  size_bytes  BIGINT,
-  image_data  BYTEA NOT NULL,
-  is_primary  BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS uq_ppi_primary ON pet_photos_inline(pet_id) WHERE is_primary;
-CREATE INDEX IF NOT EXISTS idx_ppi_pet ON pet_photos_inline(pet_id);
+-- PET_PHOTOS and PET_PHOTOS_INLINE were removed: images are now referenced via `pets.pet_image`.
