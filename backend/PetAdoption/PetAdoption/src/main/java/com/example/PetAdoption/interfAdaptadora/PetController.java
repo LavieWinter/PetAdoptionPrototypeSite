@@ -5,6 +5,7 @@ import com.example.PetAdoption.dominio.enums.PetStatus;
 import com.example.PetAdoption.servicos.PetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -200,4 +201,16 @@ public class PetController {
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         // mantida exatamente a mesma resposta/semântica anterior
     }
+
+    @PostMapping("/{id}/image")
+    public ResponseEntity<PetResponse> uploadImage(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        return service.updatePetImage(id, file)
+                .map(PetResponse::from)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
