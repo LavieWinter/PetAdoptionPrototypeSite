@@ -54,7 +54,7 @@ public class UserController {
     public String welcome() {
         return "Welcome to the Pet Adoption API!";
     }
-
+    @PreAuthorize("permitAll()")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody SignupRequest body) {
         final String email = body.email().trim().toLowerCase();
@@ -95,7 +95,7 @@ public class UserController {
                 .headers(headers)
                 .body(new AuthResponse("User registered successfully. Token: " + token));
     }
-
+    @PreAuthorize("permitAll()")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody SigninRequest body) {
         Authentication auth = authManager.authenticate(
@@ -112,7 +112,7 @@ public class UserController {
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         return ResponseEntity.ok().headers(headers).body(new AuthResponse(token));
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         String token = jwtService.resolveBearerToken(authorization);
@@ -121,7 +121,7 @@ public class UserController {
         }
         return ResponseEntity.noContent().build();
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<UserDto> me(Authentication auth) {
         if (auth == null || auth.getName() == null) {
@@ -139,10 +139,10 @@ public class UserController {
                 user.getRoles().stream().map(Enum::name).toList());
         return ResponseEntity.ok(dto);
     }
-
+    @PreAuthorize("isAuthenticated()")
     public record IdDto(java.util.UUID id) { // para retornar id
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/testando", produces = "application/json") // retorna apenas o id
     public ResponseEntity<IdDto> testando(Authentication auth) {
         if (auth == null || auth.getName() == null) {
@@ -152,7 +152,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         return ResponseEntity.ok(new IdDto(user.getId()));
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/change-profile") // atualizar nome e telefone
     public ResponseEntity<UserDto> updateProfile(Authentication auth,
             @Valid @RequestBody UpdateProfileRequest body) {
@@ -176,7 +176,7 @@ public class UserController {
                 user.getRoles().stream().map(Enum::name).toList());
         return ResponseEntity.ok(dto);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/change-password")
     public ResponseEntity<Void> changePassword(Authentication auth,
             @Valid @RequestBody ChangePasswordRequest body) {
@@ -197,7 +197,7 @@ public class UserController {
         users.save(user);
         return ResponseEntity.noContent().build();
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/id")
     public ResponseEntity<IdResponse> myId(Authentication auth) {
         if (auth == null || auth.getName() == null) {
