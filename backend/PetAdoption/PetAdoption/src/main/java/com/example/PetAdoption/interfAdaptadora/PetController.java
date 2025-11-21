@@ -5,6 +5,7 @@ import com.example.PetAdoption.dominio.enums.PetStatus;
 import com.example.PetAdoption.servicos.PetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
 
@@ -138,6 +139,7 @@ public class PetController {
     // ========== /DTOs ==========
 
     // CREATE
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PetResponse> create(@RequestBody PetRequest body) {
         PetModel saved = service.create(body.toDomain());
@@ -145,6 +147,7 @@ public class PetController {
     }
 
     // READ (by id)
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<PetResponse> get(@PathVariable UUID id) {
         return service.get(id)
@@ -154,6 +157,7 @@ public class PetController {
     }
 
     // LIST (com paginação simples e ordenação)
+    @PreAuthorize("permitAll()")
     @GetMapping
     public List<PetResponse> list(
             @RequestParam(defaultValue = "0") int page,
@@ -167,6 +171,7 @@ public class PetController {
     }
 
     // LIST por status
+    @PreAuthorize("permitAll()")
     @GetMapping("/status/{status}")
     public List<PetResponse> listByStatus(
             @PathVariable PetStatus status,
@@ -181,6 +186,7 @@ public class PetController {
     }
 
     // UPDATE (PUT) — continua mesma rota/semântica, mas agora com merge de campos não nulos
+    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
     @PutMapping("/{id}")
     public ResponseEntity<PetResponse> update(@PathVariable UUID id, @RequestBody PetRequest body) {
         return service.get(id)
@@ -195,13 +201,14 @@ public class PetController {
     }
 
     // DELETE
+    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         boolean removed = service.delete(id);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         // mantida exatamente a mesma resposta/semântica anterior
     }
-
+    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
     @PostMapping("/{id}/image")
     public ResponseEntity<PetResponse> uploadImage(
             @PathVariable UUID id,

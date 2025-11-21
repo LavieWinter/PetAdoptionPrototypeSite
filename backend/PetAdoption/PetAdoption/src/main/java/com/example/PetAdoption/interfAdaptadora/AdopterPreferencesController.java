@@ -26,7 +26,7 @@ public class AdopterPreferencesController {
     }
 
     // ======== "ME" endpoints ========
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/preferences")
     public ResponseEntity<?> getMine(Authentication auth) {
         UUID me = resolveUserId(auth);
@@ -34,7 +34,7 @@ public class AdopterPreferencesController {
         return opt.<ResponseEntity<?>>map(m -> ResponseEntity.ok(toResponse(m)))
                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PutMapping("/preferences")
     public ResponseEntity<?> upsertMine(Authentication auth,
                                         @Valid @RequestBody UpsertRequest req) {
@@ -43,7 +43,7 @@ public class AdopterPreferencesController {
         AdopterPreferencesModel saved = service.upsert(me, in);
         return ResponseEntity.ok(toResponse(saved));
     }
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @DeleteMapping("/preferences")
     public ResponseEntity<?> deleteMine(Authentication auth) {
         UUID me = resolveUserId(auth);

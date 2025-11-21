@@ -20,7 +20,7 @@ public class AdoptionController {
     public AdoptionController(AdoptionService service) {
         this.service = service;
     }
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PostMapping("/applications")
     public ResponseEntity<AdoptionDtos.ApplicationResponse> create(
             Authentication auth,
@@ -33,7 +33,7 @@ public class AdoptionController {
         var m = service.createApplicationForLoggedUser(auth.getName(), req.petId, useDefault);
         return ResponseEntity.ok(AdoptionDtos.ApplicationResponse.of(m));
     }
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/applications")
     public ResponseEntity<AdoptionDtos.PageResponse> listMine(
             Authentication auth,
