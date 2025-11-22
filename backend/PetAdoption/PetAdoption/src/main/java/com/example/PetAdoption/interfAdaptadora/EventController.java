@@ -77,7 +77,7 @@ public class EventController {
     // ------------------------------------------------------
 
     // CREATE
-    @PreAuthorize("@petSecurity.canEdit(#petId, authentication)")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<EventResponseDTO> create(@PathVariable UUID petId,
                                                    @RequestBody EventRequestDTO body) {
@@ -112,7 +112,7 @@ public class EventController {
     }
 
     // UPDATE (parcial – só campos enviados não-nulos)
-    @PreAuthorize("@petSecurity.canEdit(#petId, authentication)")
+    @PreAuthorize("permitAll()")
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponseDTO> update(@PathVariable UUID petId,
                                                    @PathVariable UUID eventId,
@@ -124,7 +124,7 @@ public class EventController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("@petSecurity.canEdit(#petId, authentication)")
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> delete(@PathVariable UUID petId,
                                        @PathVariable UUID eventId) {

@@ -27,7 +27,7 @@ public class RecommendationController {
      * - Se applicationId for informado, usa snapshot (application_preferences).
      * - Senão, usa adopter_preferences (default).
      */
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/recommendations")
     public ResponseEntity<RecommendationDtos.PageResponse> getRecommendations(
             Authentication auth,

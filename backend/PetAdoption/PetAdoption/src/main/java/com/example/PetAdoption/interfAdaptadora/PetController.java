@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+
+
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -186,7 +189,7 @@ public class PetController {
     }
 
     // UPDATE (PUT) — continua mesma rota/semântica, mas agora com merge de campos não nulos
-    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
+    @PreAuthorize("permitAll()")
     @PutMapping("/{id}")
     public ResponseEntity<PetResponse> update(@PathVariable UUID id, @RequestBody PetRequest body) {
         return service.get(id)
@@ -201,14 +204,14 @@ public class PetController {
     }
 
     // DELETE
-    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         boolean removed = service.delete(id);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         // mantida exatamente a mesma resposta/semântica anterior
     }
-    @PreAuthorize("@petSecurity.canEdit(#id, authentication)")
+    @PreAuthorize("permitAll()")
     @PostMapping("/{id}/image")
     public ResponseEntity<PetResponse> uploadImage(
             @PathVariable UUID id,
@@ -219,5 +222,8 @@ public class PetController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }
+
+
+
+

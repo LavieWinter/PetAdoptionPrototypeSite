@@ -56,7 +56,7 @@ public class OrgController {
         }
     }
     // ==========================
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<OrgResponseDTO> create(@RequestBody OrgRequestDTO body) {
         OrgModel saved = service.create(body.toModel());
@@ -85,7 +85,7 @@ public class OrgController {
     }
 
     // update parcial (mesmo padrão do EventController usa PUT)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PutMapping("/{id}")
     public ResponseEntity<OrgResponseDTO> update(@PathVariable UUID id,
                                                  @RequestBody OrgRequestDTO body) {
@@ -94,7 +94,7 @@ public class OrgController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         boolean removed = service.delete(id);
