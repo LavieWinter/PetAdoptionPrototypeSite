@@ -1,9 +1,11 @@
 package com.example.PetAdoption.servicos;
 
+import com.example.PetAdoption.servicos.StorageService;
 import com.example.PetAdoption.dominio.entidades.PetModel;
 import com.example.PetAdoption.dominio.enums.PetStatus;
 import com.example.PetAdoption.dominio.InterfRepositories.PetRepositoryPort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -14,9 +16,11 @@ import java.util.UUID;
 public class PetService {
 
     private final PetRepositoryPort pets;
+    private final StorageService storage;
 
-    public PetService(PetRepositoryPort pets) {
+    public PetService(PetRepositoryPort pets, StorageService storage) {
         this.pets = pets;
+        this.storage = storage;
     }
 
     public PetModel create(PetModel pet) {
@@ -88,6 +92,12 @@ public class PetService {
             if (incoming.getRescuedAt() != null) {
                 existing.setRescuedAt(incoming.getRescuedAt());
             }
+            if (incoming.getPetDescription() != null) {
+                existing.setPetDescription(incoming.getPetDescription());
+            }
+            if (incoming.getPetImage() != null) {
+                existing.setPetImage(incoming.getPetImage());
+            }
 
             existing.setUpdatedAt(OffsetDateTime.now());
             return pets.save(existing);
@@ -97,4 +107,13 @@ public class PetService {
     public boolean delete(UUID id) {
         return pets.deleteById(id);
     }
+    public Optional<PetModel> updatePetImage(UUID id, MultipartFile file) {
+        return pets.findById(id).map(existing -> {
+            String imageRef = storage.storePetImage(id, file);
+            existing.setPetImage(imageRef);
+            existing.setUpdatedAt(OffsetDateTime.now());
+            return pets.save(existing);
+        });
+    }
+    
 }

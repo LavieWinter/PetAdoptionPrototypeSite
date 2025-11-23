@@ -31,13 +31,17 @@ services:
       - SPRING_FLYWAY_LOCATIONS=classpath:db/migration,filesystem:/app/migrations
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
-
+      - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=10MB
+      - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=10MB
+      - APP_STORAGE_BASE_DIR=/app/uploads
+      - APP_STORAGE_PUBLIC_BASE_URL=/static
     ports:
       - "8080:8080" # Expõe a porta da API
     networks:
       - app-network
     volumes:
       - ./migrations:/app/migrations:ro
+      - ./uploads:/app/uploads
 
   # Serviço do Frontend (Vue.js com Nginx)
   frontend:

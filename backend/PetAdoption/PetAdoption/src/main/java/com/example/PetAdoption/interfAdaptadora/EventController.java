@@ -7,6 +7,7 @@ import com.example.PetAdoption.servicos.EventService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -76,6 +77,7 @@ public class EventController {
     // ------------------------------------------------------
 
     // CREATE
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<EventResponseDTO> create(@PathVariable UUID petId,
                                                    @RequestBody EventRequestDTO body) {
@@ -85,6 +87,7 @@ public class EventController {
     }
 
     // READ (by id)
+    @PreAuthorize("permitAll()")
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponseDTO> get(@PathVariable UUID petId,
                                                 @PathVariable UUID eventId) {
@@ -95,6 +98,7 @@ public class EventController {
     }
 
     // LIST (com filtros opcionais)
+    @PreAuthorize("permitAll()")
     @GetMapping
     public List<EventResponseDTO> list(@PathVariable UUID petId,
                                        @RequestParam(required = false) EventType type,
@@ -108,6 +112,7 @@ public class EventController {
     }
 
     // UPDATE (parcial – só campos enviados não-nulos)
+    @PreAuthorize("permitAll()")
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponseDTO> update(@PathVariable UUID petId,
                                                    @PathVariable UUID eventId,
@@ -119,7 +124,7 @@ public class EventController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // DELETE
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> delete(@PathVariable UUID petId,
                                        @PathVariable UUID eventId) {

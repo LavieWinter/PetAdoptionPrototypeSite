@@ -6,6 +6,7 @@ import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class RecommendationController {
      * - Se applicationId for informado, usa snapshot (application_preferences).
      * - Senão, usa adopter_preferences (default).
      */
+    @PreAuthorize("permitAll()")
     @GetMapping("/recommendations")
     public ResponseEntity<RecommendationDtos.PageResponse> getRecommendations(
             Authentication auth,

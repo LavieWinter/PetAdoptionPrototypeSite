@@ -20,7 +20,7 @@ public class AdoptionController {
     public AdoptionController(AdoptionService service) {
         this.service = service;
     }
-
+    @PreAuthorize("permitAll()")
     @PostMapping("/applications")
     public ResponseEntity<AdoptionDtos.ApplicationResponse> create(
             Authentication auth,
@@ -33,7 +33,7 @@ public class AdoptionController {
         var m = service.createApplicationForLoggedUser(auth.getName(), req.petId, useDefault);
         return ResponseEntity.ok(AdoptionDtos.ApplicationResponse.of(m));
     }
-
+    @PreAuthorize("permitAll()")
     @GetMapping("/applications")
     public ResponseEntity<AdoptionDtos.PageResponse> listMine(
             Authentication auth,
@@ -53,21 +53,21 @@ public class AdoptionController {
         out.content = content;
         return ResponseEntity.ok(out);
     }
-
+    @PreAuthorize("permitAll()")
     @PostMapping("/applications/{id}/cancel")
     public ResponseEntity<Void> cancelMine(Authentication auth, @PathVariable UUID id) {
         service.cancelMyApplication(auth.getName(), id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PostMapping("/applications/{id}/approve")
     public ResponseEntity<Void> approve(@PathVariable UUID id) {
         service.approve(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PostMapping("/applications/{id}/reject")
     public ResponseEntity<Void> reject(@PathVariable UUID id) {
         service.reject(id);
