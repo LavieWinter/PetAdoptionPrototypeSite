@@ -9,19 +9,33 @@ CREATE TEMP TABLE IF NOT EXISTS tmp_ids (
 );
 TRUNCATE tmp_ids;
 
--- 1) Parâmetros com email único (evita erro de UNIQUE)
+-- 1) Parâmetros com email e CPF únicos
 WITH params AS (
-  SELECT ('tester_'||substr(gen_random_uuid()::text,1,8)||'@example.com')::citext AS email
+    SELECT
+        ('tester_' || substr(gen_random_uuid()::text, 1, 8) || '@example.com')::citext AS email,
+        substr(translate(gen_random_uuid()::text, '-', ''), 1, 11) AS cpf,
+        'Tester'::text  AS nome,
+        'User'::text    AS sobrenome
 ),
 
 -- 2) USER upsert por email (pega id mesmo se já existia)
-u AS (
-  INSERT INTO user_admin (id, name, email, password)
-  SELECT gen_random_uuid(), 'Tester', p.email, 'x'
-  FROM params p
-  ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name
-  RETURNING id AS adopter_id
-),
+     u AS (
+INSERT INTO user_admin (
+    id, name, surname, email, cpf, password
+)
+SELECT
+    gen_random_uuid(),
+    p.nome,
+    p.sobrenome,
+    p.email,
+    p.cpf,
+    'x'
+FROM params p
+    ON CONFLICT (email) DO UPDATE
+                               SET name    = EXCLUDED.name,
+                               surname = EXCLUDED.surname
+                               RETURNING id AS adopter_id
+                               ),
 
 -- 3) PREFERÊNCIAS padrão (upsert por adopter_id)
 pdefs AS (

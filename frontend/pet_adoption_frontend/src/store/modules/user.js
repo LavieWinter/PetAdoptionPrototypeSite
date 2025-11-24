@@ -48,7 +48,8 @@ export default {
                 const data = await apiLogin(email, password)
                 // token já foi salvo pelo service; sincroniza local
                 commit('SET_TOKEN', localStorage.getItem(TOKEN_KEY) || '')
-                //await dispatch('fetchProfile')
+                console.log('Token after login:', localStorage.getItem(TOKEN_KEY));
+                await dispatch('fetchProfile')
                 return data
             } finally {
                 commit('SET_LOADING', false)
@@ -71,6 +72,7 @@ export default {
             try {
                 const me = await getMe()
                 commit('SET_PROFILE', me)
+                console.log('Fetched profile:', me);
                 return me
             } catch (err) {
                 // 🔑 se der 401 aqui (token inválido/expirado), limpe o estado

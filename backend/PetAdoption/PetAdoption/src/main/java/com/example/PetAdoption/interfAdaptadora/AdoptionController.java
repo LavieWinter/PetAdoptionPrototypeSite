@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class AdoptionController {
 
     private final AdoptionService service;
-
     public AdoptionController(AdoptionService service) {
         this.service = service;
     }
@@ -30,8 +29,13 @@ public class AdoptionController {
             return ResponseEntity.badRequest().build();
         }
         boolean useDefault = (req.useDefaultPreferences == null) || req.useDefaultPreferences;
-        var m = service.createApplicationForLoggedUser(auth.getName(), req.petId, useDefault);
-        return ResponseEntity.ok(AdoptionDtos.ApplicationResponse.of(m));
+        try{
+            var m = service.createApplicationForLoggedUser(auth.getName(), req.petId, useDefault);
+            return ResponseEntity.ok(AdoptionDtos.ApplicationResponse.of(m));
+
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/applications")

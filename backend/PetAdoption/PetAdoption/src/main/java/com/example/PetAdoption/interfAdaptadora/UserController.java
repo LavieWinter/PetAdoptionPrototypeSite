@@ -22,7 +22,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -55,6 +54,11 @@ public class UserController {
         return "Welcome to the Pet Adoption API!";
     }
 
+    private String safeTrim(String s) {
+        return s == null ? null : s.trim();
+    }
+
+
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody SignupRequest body) {
         final String email = body.email().trim().toLowerCase();
@@ -74,10 +78,19 @@ public class UserController {
         UserModel u = new UserModel();
         u.setEmail(email);
         u.setName(body.name().trim());
+        u.setSurname(body.surname().trim());
         if (body.phone() != null && !body.phone().isBlank()) {
             u.setPhone(body.phone().trim());
         }
         u.setPassword(passwordEncoder.encode(body.password()));
+        u.setCep(safeTrim(body.cep()));
+        u.setStreet(safeTrim(body.street()));
+        u.setStreetNumber(safeTrim(body.number()));
+        u.setNeighborhood(safeTrim(body.neighborhood()));
+        u.setCity(safeTrim(body.city()));
+        u.setUf(safeTrim(body.uf()));
+        u.setCpf(body.cpf().trim());
+
 
         // aplica roles ANTES de salvar
         effective.forEach(u::addRole);
@@ -131,12 +144,25 @@ public class UserController {
         var user = users.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        return getUserDtoResponseEntity(user);
+    }
+
+    private ResponseEntity<UserDto> getUserDtoResponseEntity(UserModel user) {
         var dto = new UserDto(
                 user.getId(),
                 user.getName(),
+                user.getSurname(),
                 user.getEmail(),
                 user.getPhone(),
-                user.getRoles().stream().map(Enum::name).toList());
+                user.getRoles().stream().map(Enum::name).toList(),
+                user.getCpf(),
+                user.getCep(),
+                user.getStreet(),
+                user.getStreetNumber(),
+                user.getNeighborhood(),
+                user.getCity(),
+                user.getUf()
+        );
         return ResponseEntity.ok(dto);
     }
 
@@ -162,19 +188,27 @@ public class UserController {
         String email = auth.getName();
         UserModel user = users.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        if (body.cpf() != null && !body.cpf().equals(user.getCpf())) {
+            // CPF não pode ser alterado
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (body.email() != null && !body.email().equals(user.getEmail())) {
+            // Email não pode ser alterado
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        user.setName(safeTrim(body.name()));
+        user.setSurname(safeTrim(body.surname()));
+        user.setCep(safeTrim(body.cep()));
+        user.setPhone(safeTrim(body.phone()));
+        user.setStreet(safeTrim(body.street()));
+        user.setStreetNumber(safeTrim(body.streetNumber()));
+        user.setNeighborhood(safeTrim(body.neighborhood()));
+        user.setCity(safeTrim(body.city()));
+        user.setUf(safeTrim(body.uf()));
 
-        user.setName(body.name().trim());
-        if (body.phone() != null)
-            user.setPhone(body.phone().trim());
         users.save(user);
 
-        var dto = new UserDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getRoles().stream().map(Enum::name).toList());
-        return ResponseEntity.ok(dto);
+        return getUserDtoResponseEntity(user);
     }
 
     @PostMapping("/change-password")
@@ -215,8 +249,16 @@ public class UserController {
             @Email @NotBlank String email,
             @NotBlank @Size(min = 6, max = 100) String password,
             @NotBlank String name,
+            @NotBlank String surname,
+            @NotBlank @Size(min = 11, max=14) String cpf,
             String phone,
-            Set<SignupRole> roles // agora aceita: USER, ADMIN (e outros que você tiver)
+            Set<SignupRole> roles,
+            String cep,
+            String street,
+            String number,
+            String neighborhood,
+            String city,
+            @Size(min = 2, max = 2) String uf
     ) {
     }
 
@@ -232,14 +274,32 @@ public class UserController {
     public record UserDto( // para o /me
             java.util.UUID id,
             String name,
+            String surname,
             String email,
             String phone,
-            java.util.List<String> roles) {
+            java.util.List<String> roles,
+            String cpf,
+            String cep,
+            String street,
+            String streetNumber,
+            String neighborhood,
+            String city,
+            String uf) {
     }
 
     public record UpdateProfileRequest(
             @NotBlank String name,
-            String phone) {
+            String surname,
+            String email,
+            String phone,
+            java.util.List<String> roles,
+            String cpf,
+            String cep,
+            String street,
+            String streetNumber,
+            String neighborhood,
+            String city,
+            String uf) {
     }
 
     public record ChangePasswordRequest(

@@ -1,4 +1,6 @@
 // src/services/pets.js
+import api, { TOKEN_KEY } from '@/plugins/axios';
+
 // MOCK de pets com paginação fake
 
 // gera uma imagem diferente por índice
@@ -73,12 +75,51 @@ const delay = (ms) => new Promise((r) => setTimeout(r, ms));
  * retorna { items, last, page }
  */
 export async function listPets({ page = 0, size = 10 } = {}) {
-  await delay(400 + Math.random() * 400); // 400–800ms
-
+  //await delay(400 + Math.random() * 400); // 400–800ms
+  let token = localStorage.getItem(TOKEN_KEY)
+  let header = {
+    Authorization: `Bearer ${token}`
+  }
+  const { data } = await api.get(`/pets?page=${page}&size=${size}`, { headers: header })
+  const items = data;
   const start = page * size;
   const end = start + size;
-  const items = DB.slice(start, end);
-  const last = end >= DB.length;
+  console.log(`Fetched pets from API: page ${page}, size ${size}, items ${items}`);
+  return { items, end, page };
+}
 
-  return { items, last, page };
+/**
+ * listPets({ page, size })
+ * retorna { items, last, page }
+ */
+export async function listAvailablePets({ page = 0, size = 10 } = {}) {
+  //await delay(400 + Math.random() * 400); // 400–800ms
+  let token = localStorage.getItem(TOKEN_KEY)
+  let header = {
+    Authorization: `Bearer ${token}`
+  }
+  const { data } = await api.get(`/pets/status/AVAILABLE?page=${page}&size=${size}`, { headers: header })
+  const items = data;
+  const start = page * size;
+  const end = start + size;
+  console.log(`Fetched pets from API: page ${page}, size ${size}, items ${items}`);
+  return { items, end, page };
+}
+
+export async function getPetById(id) {
+  let token = localStorage.getItem(TOKEN_KEY)
+  let header = {
+    Authorization: `Bearer ${token}`
+  }
+  const { data } = await api.get(`/pets/${id}`, { headers: header })
+  return data;
+}
+
+export async function adoptPet(id) {
+  let token = localStorage.getItem(TOKEN_KEY)
+  let header = {
+    Authorization: `Bearer ${token}`
+  }
+  const { data } = await api.post(`/pets/${id}/adopt`, {}, { headers: header })
+  return data;
 }

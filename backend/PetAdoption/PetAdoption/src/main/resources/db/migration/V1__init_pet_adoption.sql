@@ -27,8 +27,16 @@ CREATE TABLE IF NOT EXISTS org (
 CREATE TABLE IF NOT EXISTS user_admin (
   id           UUID PRIMARY KEY,
   name         TEXT NOT NULL,
+  surname      TEXT NOT NULL,
   email        CITEXT UNIQUE,
   phone        TEXT,
+  cpf          TEXT NOT NULL UNIQUE,
+  cep          TEXT,
+  street       TEXT,
+  streetNumber TEXT,
+  uf           TEXT,
+  neighborhood TEXT,
+  city         TEXT,
   org_id       UUID,     -- FK to org(org_id)
   password     TEXT NOT NULL,
   adoptiona_id UUID,     -- FK to adoptions(id), added after adoptions exists
