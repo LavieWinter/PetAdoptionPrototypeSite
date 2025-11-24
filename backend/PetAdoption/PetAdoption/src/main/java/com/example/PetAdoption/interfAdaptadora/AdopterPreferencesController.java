@@ -26,7 +26,7 @@ public class AdopterPreferencesController {
     }
 
     // ======== "ME" endpoints ========
-
+    @PreAuthorize("permitAll()")
     @GetMapping("/preferences")
     public ResponseEntity<?> getMine(Authentication auth) {
         UUID me = resolveUserId(auth);
@@ -34,7 +34,7 @@ public class AdopterPreferencesController {
         return opt.<ResponseEntity<?>>map(m -> ResponseEntity.ok(toResponse(m)))
                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
-
+    @PreAuthorize("permitAll()")
     @PutMapping("/preferences")
     public ResponseEntity<?> upsertMine(Authentication auth,
                                         @Valid @RequestBody UpsertRequest req) {
@@ -43,7 +43,7 @@ public class AdopterPreferencesController {
         AdopterPreferencesModel saved = service.upsert(me, in);
         return ResponseEntity.ok(toResponse(saved));
     }
-
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/preferences")
     public ResponseEntity<?> deleteMine(Authentication auth) {
         UUID me = resolveUserId(auth);
@@ -52,7 +52,7 @@ public class AdopterPreferencesController {
     }
 
     // ======== Admin/operacional (opcional) ========
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/users/{adopterId}/preferences")
     public ResponseEntity<?> getByUser(@PathVariable UUID adopterId) {
         return service.getByAdopterId(adopterId)
@@ -60,7 +60,7 @@ public class AdopterPreferencesController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @PutMapping("/users/{adopterId}/preferences")
     public ResponseEntity<?> upsertByUser(@PathVariable UUID adopterId,
                                           @Valid @RequestBody UpsertRequest req) {
@@ -69,7 +69,7 @@ public class AdopterPreferencesController {
         return ResponseEntity.ok(toResponse(saved));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/users/{adopterId}/preferences")
     public ResponseEntity<?> deleteByUser(@PathVariable UUID adopterId) {
         service.deleteByAdopterId(adopterId);

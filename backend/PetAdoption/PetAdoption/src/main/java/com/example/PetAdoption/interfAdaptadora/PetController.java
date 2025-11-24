@@ -5,7 +5,12 @@ import com.example.PetAdoption.dominio.enums.PetStatus;
 import com.example.PetAdoption.servicos.PetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+
+
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -38,6 +43,8 @@ public class PetController {
         public String  hasChronicDisease;
         public Boolean goodWithOtherAnimals;
         public Boolean requiresConstantCare;
+        public String petDescription;
+        public String petImage;
         public LocalDate registeredDate;
         public LocalDate rescuedAt;
 
@@ -57,6 +64,8 @@ public class PetController {
             p.setHasChronicDisease(this.hasChronicDisease);
             p.setGoodWithOtherAnimals(this.goodWithOtherAnimals);
             p.setRequiresConstantCare(this.requiresConstantCare);
+            p.setPetDescription(this.petDescription);
+            p.setPetImage(this.petImage);
             p.setRegisteredDate(this.registeredDate);
             p.setRescuedAt(this.rescuedAt);
             return p;
@@ -76,6 +85,8 @@ public class PetController {
             if (this.hasChronicDisease != null) target.setHasChronicDisease(this.hasChronicDisease);
             if (this.goodWithOtherAnimals != null) target.setGoodWithOtherAnimals(this.goodWithOtherAnimals);
             if (this.requiresConstantCare != null) target.setRequiresConstantCare(this.requiresConstantCare);
+            if (this.petDescription != null) target.setPetDescription(this.petDescription);
+            if (this.petImage != null) target.setPetImage(this.petImage);
             if (this.registeredDate != null) target.setRegisteredDate(this.registeredDate);
             if (this.rescuedAt != null) target.setRescuedAt(this.rescuedAt);
         }
@@ -96,6 +107,8 @@ public class PetController {
         public String  hasChronicDisease;
         public Boolean goodWithOtherAnimals;
         public Boolean requiresConstantCare;
+        public String petDescription;
+        public String petImage;
         public LocalDate registeredDate;
         public LocalDate rescuedAt;
         public OffsetDateTime createdAt;
@@ -117,6 +130,8 @@ public class PetController {
             r.hasChronicDisease = p.getHasChronicDisease();
             r.goodWithOtherAnimals = p.getGoodWithOtherAnimals();
             r.requiresConstantCare = p.getRequiresConstantCare();
+            r.petDescription = p.getPetDescription();
+            r.petImage = p.getPetImage();
             r.registeredDate = p.getRegisteredDate();
             r.rescuedAt = p.getRescuedAt();
             r.createdAt = p.getCreatedAt();
@@ -127,6 +142,7 @@ public class PetController {
     // ========== /DTOs ==========
 
     // CREATE
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PetResponse> create(@RequestBody PetRequest body) {
         PetModel saved = service.create(body.toDomain());
@@ -134,6 +150,7 @@ public class PetController {
     }
 
     // READ (by id)
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<PetResponse> get(@PathVariable UUID id) {
         return service.get(id)
@@ -143,6 +160,7 @@ public class PetController {
     }
 
     // LIST (com paginação simples e ordenação)
+    @PreAuthorize("permitAll()")
     @GetMapping
     public List<PetResponse> list(
             @RequestParam(defaultValue = "0") int page,
@@ -156,6 +174,7 @@ public class PetController {
     }
 
     // LIST por status
+    @PreAuthorize("permitAll()")
     @GetMapping("/status/{status}")
     public List<PetResponse> listByStatus(
             @PathVariable PetStatus status,
@@ -170,6 +189,7 @@ public class PetController {
     }
 
     // UPDATE (PUT) — continua mesma rota/semântica, mas agora com merge de campos não nulos
+    @PreAuthorize("permitAll()")
     @PutMapping("/{id}")
     public ResponseEntity<PetResponse> update(@PathVariable UUID id, @RequestBody PetRequest body) {
         return service.get(id)
@@ -184,10 +204,26 @@ public class PetController {
     }
 
     // DELETE
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         boolean removed = service.delete(id);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
         // mantida exatamente a mesma resposta/semântica anterior
     }
+    @PreAuthorize("permitAll()")
+    @PostMapping("/{id}/image")
+    public ResponseEntity<PetResponse> uploadImage(
+            @PathVariable UUID id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        return service.updatePetImage(id, file)
+                .map(PetResponse::from)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
+
+
+
+

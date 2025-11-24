@@ -33,6 +33,10 @@ public class PetModel {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
+    // descriptive fields
+    private String petDescription;
+    private String petImage; // will carry a hash referencing external storage
+
     // getters/setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -68,4 +72,8 @@ public class PetModel {
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
     public OffsetDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getPetDescription() { return petDescription; }
+    public void setPetDescription(String petDescription) { this.petDescription = petDescription; }
+    public String getPetImage() { return petImage; }
+    public void setPetImage(String petImage) { this.petImage = petImage; }
 }

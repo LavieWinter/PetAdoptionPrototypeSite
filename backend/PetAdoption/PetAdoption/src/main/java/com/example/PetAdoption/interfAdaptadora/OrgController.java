@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -55,14 +56,14 @@ public class OrgController {
         }
     }
     // ==========================
-
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<OrgResponseDTO> create(@RequestBody OrgRequestDTO body) {
         OrgModel saved = service.create(body.toModel());
         return ResponseEntity.created(URI.create("/api/orgs/" + saved.getId()))
                              .body(OrgResponseDTO.fromModel(saved));
     }
-
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<OrgResponseDTO> get(@PathVariable UUID id) {
         return service.get(id)
@@ -72,6 +73,7 @@ public class OrgController {
     }
 
     // LIST: “listagem só de org” com paginação/ordenação e filtro q
+    @PreAuthorize("permitAll()")
     @GetMapping
     public List<OrgResponseDTO> list(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "20") int size,
@@ -83,6 +85,7 @@ public class OrgController {
     }
 
     // update parcial (mesmo padrão do EventController usa PUT)
+    @PreAuthorize("permitAll()")
     @PutMapping("/{id}")
     public ResponseEntity<OrgResponseDTO> update(@PathVariable UUID id,
                                                  @RequestBody OrgRequestDTO body) {
@@ -91,7 +94,7 @@ public class OrgController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @PreAuthorize("permitAll()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         boolean removed = service.delete(id);
