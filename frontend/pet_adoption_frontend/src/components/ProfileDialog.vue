@@ -35,8 +35,8 @@
                         </v-col>
                         <v-col cols="12" md="6">
 
-                            <!-- Sobrenome -->
-                            <v-text-field v-model="form.lastName" label="Sobrenome" variant="solo" density="comfortable"
+                            <!-- Sobrenome  -->
+                            <v-text-field v-model="form.surname" label="Sobrenome" variant="solo" density="comfortable"
                                 class="mb-3" rounded="lg" :rules="[rules.required]" color="primary" />
 
                         </v-col>
@@ -66,10 +66,10 @@
                         <!-- CEP -->
                         <v-col cols="12" md="6">
                             <v-mask-input v-model="form.cep" label="CEP" placeholder="00000-000"
-                                :rules="[rules.required, rules.cep]" color="primary" mask="#####-###" variant="solo"
-                                density="comfortable" :loading="cepLoading" rounded="lg"
-                                :append-inner-icon="cepLoading ? '' : 'mdi-magnify'" @click:append-inner="onFetchCep"
-                                @blur="onFetchCep" />
+                                :rules="[rules.cep]" color="primary" mask="#####-###" variant="solo"
+                                density="comfortable" :loading="loading" rounded="lg"
+                                :append-inner-icon="loading ? '' : 'mdi-magnify'" @click:append-inner="fetchAddress"
+                                @blur="fetchAddress" />
                         </v-col>
                         <v-col cols="12" md="6">
 
@@ -100,7 +100,7 @@
 
                 <v-row class="mt-6" dense>
                     <v-col cols="12">
-                        <v-btn color="primary" block size="large" rounded="lg" :loading="loading" @click="onSave">
+                        <v-btn color="primary" block size="large" rounded="lg" :loading="loading" @click="onSubmit">
                             Salvar
                         </v-btn>
                     </v-col>
@@ -151,16 +151,20 @@ const rules = {
 // quando abrir o dialog, popular com os dados da store
 watch(open, (v) => {
     if (v) {
+        //store.state.user.fetchProfile() // garantir dados atualizados
         const profile = store.state.user.profile || {}
         form.value = {
             name: profile.name || '',
+            surname: profile.surname || '',
             phone: profile.phone || '',
             cep: profile.cep || '',
             street: profile.street || '',
             number: profile.number || '',
             neighborhood: profile.neighborhood || '',
             city: profile.city || '',
-            state: profile.state || ''
+            state: profile.state || '',
+            email: profile.email || '',
+            cpf: profile.cpf || '',
         }
     }
 })
@@ -190,8 +194,8 @@ async function fetchAddress() {
 }
 
 async function onSubmit() {
-    const valid = await formRef.value.validate()
-    if (!valid.valid) return
+    const valid = await formRef.value?.validate()
+    if (!valid?.valid) return
     loading.value = true
     try {
         await store.dispatch('user/updateProfile', form.value)
