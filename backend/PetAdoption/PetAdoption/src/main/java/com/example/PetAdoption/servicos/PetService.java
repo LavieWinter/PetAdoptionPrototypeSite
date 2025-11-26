@@ -115,5 +115,40 @@ public class PetService {
             return pets.save(existing);
         });
     }
+
+    public PetModel createWithImage(PetModel pet, MultipartFile file) {
+        // 1. Prepara e salva o Pet inicialmente (sem a imagem) para gerar o ID
+        pet.setId(null);
+        var now = OffsetDateTime.now();
+        pet.setCreatedAt(now);
+        pet.setUpdatedAt(now);
+
+        if (pet.getStatus() == null) {
+            pet.setStatus(PetStatus.AVAILABLE);
+        }
+
+        // Primeiro save: Gera o UUID no banco (ou na entidade)
+        PetModel savedPet = pets.save(pet);
+
+        // 2. Se houver arquivo, faz o upload e atualiza o registro
+        if (file != null && !file.isEmpty()) {
+            try {
+                // Usa o ID gerado para nomear/organizar o arquivo no storage
+                String imageRef = storage.storePetImage(savedPet.getId(), file);
+
+                // Atualiza o modelo com o caminho da imagem
+                savedPet.setPetImage(imageRef);
+
+                // Segundo save: Atualiza o registro no banco com o link da imagem
+                return pets.save(savedPet);
+            } catch (Exception e) {
+                // Opcional: Se o upload falhar, você pode decidir se deleta o pet
+                // ou apenas lança o erro, deixando o pet criado mas sem foto.
+                throw new RuntimeException("Erro ao salvar imagem do pet", e);
+            }
+        }
+
+        return savedPet;
+    }
     
 }

@@ -143,9 +143,17 @@ public class PetController {
 
     // CREATE
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public ResponseEntity<PetResponse> create(@RequestBody PetRequest body) {
-        PetModel saved = service.create(body.toDomain());
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // Aceita Multipart
+    public ResponseEntity<PetResponse> create(
+            @RequestPart("data") PetRequest body,              // JSON entra aqui
+            @RequestPart(value = "file", required = false) MultipartFile file // Arquivo entra aqui
+    ) {
+        // Converte o DTO para Domínio
+        PetModel domain = body.toDomain();
+
+        // Chama o novo método do serviço que lida com ambos
+        PetModel saved = service.createWithImage(domain, file);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(PetResponse.from(saved));
     }
 

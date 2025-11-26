@@ -36,7 +36,7 @@
             </v-col>
             <v-col cols="6">
               <div class="text-caption">Porte</div>
-              <div class="text-high-emphasis">{{ pet.size ?? '-' }}</div>
+              <div class="text-high-emphasis">{{ pet.sizeFormatted ?? '-' }}</div>
             </v-col>
           </v-row>
 
@@ -55,6 +55,9 @@
               >
                 {{ c.title }}
               </v-chip>
+              <span v-if="!pet.caracteristicas?.length" class="text-caption">
+                Nenhuma característica específica listada.
+              </span>
             </div>
           </div>
 
@@ -121,9 +124,9 @@ const model = computed({
 })
 
 const genderIcon = computed(() =>
-  props.pet?.gender === 'M' ? 'mdi-gender-male' : 'mdi-gender-female'
+  props.pet?.sex === 'M' ? 'mdi-gender-male' : 'mdi-gender-female'
 )
-const genderColor = computed(() => (props.pet?.gender === 'M' ? 'blue' : 'pink'))
+const genderColor = computed(() => (props.pet?.sex === 'M' ? 'blue' : 'pink'))
 </script>
 
 <style scoped>

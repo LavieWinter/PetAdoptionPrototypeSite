@@ -7,7 +7,7 @@
       <v-container fluid>
         <v-infinite-scroll class="w-100" @load="loadMore">
           <v-row dense>
-            <v-col v-for="card in cards" :key="card.name" :cols="card.flex">
+            <v-col v-for="card in cards" :key="card.name" cols="4">
               <!-- {{  router.currentRoute.value.name }} -->
               <Pet v-if="router.currentRoute.value.name == 'home' || router.currentRoute.value.name == 'pets'" :card="card" />
               <Ong v-if="router.currentRoute.value.name == 'ongs'" :card="ongCard" />
@@ -21,9 +21,11 @@
               </v-row>
             </v-col>
             <v-col cols="12" class="text-center">
-              <div v-if="!hasMore" class="text-medium-emphasis py-6">
-                Não há mais pets para mostrar.
-              </div>
+              <template v-slot:empty>
+                <div class="text-medium-emphasis py-6 text-center">
+                  Não há mais pets para mostrar.
+                </div>
+              </template>
             </v-col>
           </v-row>
         </v-infinite-scroll>
@@ -270,7 +272,7 @@ const cards = ref([
   // }
 ])
 
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 const ongCard = ref([
   {
     name: 'Marshmellow',
@@ -294,6 +296,17 @@ const ongCard = ref([
   },
 ])
 
+const SIZE_MAP = {
+  'SMALL': 'Pequeno',
+  'MEDIUM': 'Médio',
+  'LARGE': 'Grande'
+}
+
+const SPECIES_MAP = {
+  'CAT': 'Gato',
+  'DOG': 'Cão'
+}
+
 async function loadMore({ done }) {
   if (!hasMore.value || loading.value) {
     done('ok')
@@ -301,24 +314,84 @@ async function loadMore({ done }) {
   }
   loading.value = true
   error.value = ''
+  
   try {
+    // Chama API
     const { items, last, page: currentPage } = await listAvailablePets({ page: page.value, size: size.value })
-    //let resp = await listPets({ page: page.value, size: size.value })
-    console.log(Array.isArray(items))
-    console.log(items)
+    
     if (Array.isArray(items) && items.length) {
-      cards.value.push(...items)
-      page.value = (currentPage ?? page.value) + 1   // prepara a próxima página
+      
+      // === MAPPER: Transforma JSON do Back no formato visual do Front ===
+      const mappedItems = items.map(pet => {
+        
+        // 1. Gera Array de Características (Chips) baseado nos booleanos/strings
+        const traits = []
+        
+        if (pet.goodWithOtherAnimals) {
+          traits.push({ title: 'Sociável', color: 'green' })
+        }
+        
+        if (pet.requiresConstantCare) {
+          traits.push({ title: 'Cuidados Constantes', color: 'orange' })
+        }
+        
+        if (pet.hasOngoingTreatment) {
+          traits.push({ title: 'Em Tratamento', color: 'blue' })
+        }
+        
+        // Se tiver doença crônica ou necessidade especial, vira chip
+        if (pet.hasSpecialNeeds) {
+          traits.push({ title: pet.hasSpecialNeeds, color: 'red' }) // Ex: WHEELCHAIR
+        }
+        if (pet.hasChronicDisease) {
+           traits.push({ title: `Condição: ${pet.hasChronicDisease}`, color: 'purple' })
+        }
+
+        // 2. Monta necessidades em texto corrido para o modal
+        const needsText = [
+            pet.hasSpecialNeeds ? `Necessidades: ${pet.hasSpecialNeeds}` : null,
+            pet.hasOngoingTreatment ? 'Possui tratamento em andamento' : null,
+            pet.requiresConstantCare ? 'Requer supervisão constante' : null
+        ].filter(Boolean).join(', ') || 'Nenhuma necessidade especial informada.'
+
+        // 3. Retorna objeto formatado
+        return {
+          ...pet,
+          // Ajusta Imagem
+          src: pet.petImage 
+            ? `${API_BASE_URL}${pet.petImage}` 
+            : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=500&q=60',
+          
+          // Traduções
+          sizeFormatted: SIZE_MAP[pet.size] || pet.size,
+          speciesFormatted: SPECIES_MAP[pet.species] || pet.species,
+          
+          // Campos para o Card e Dialog
+          caracteristicas: traits,
+          place: 'Campinas, SP', // Hardcoded pois o back ainda não tem cidade/estado
+          ong: 'ONG Parceira',   // Hardcoded pois rescuedById ainda é ID
+          age: 'Não inf.',       // Back não tem data de nascimento ainda
+          weight: 'Não inf.',    // Back não tem peso ainda
+          
+          // Mapeia descrição para garantir que não quebre se for null
+          description: pet.petDescription || 'Este pet ainda não tem uma descrição detalhada, mas está ansioso para te conhecer!',
+          needs: needsText
+        }
+      })
+      // =================================================================
+
+      cards.value.push(...mappedItems)
+      page.value = (currentPage ?? page.value) + 1
       hasMore.value = !last
       done(last ? 'empty' : 'ok')
     } else {
       hasMore.value = false
-      error.value = 'Nenhum pet encontrado.'
+      if(cards.value.length === 0) error.value = 'Nenhum pet encontrado.'
       done('empty')
     }
   } catch (e) {
     error.value = 'Falha ao carregar pets.'
-    console.log(e)
+    console.error(e)
     done('error')
   } finally {
     loading.value = false

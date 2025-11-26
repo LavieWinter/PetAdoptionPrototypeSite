@@ -20,6 +20,11 @@ public class OrgController {
     private final OrgService service;
     public OrgController(OrgService service) { this.service = service; }
 
+    private String safeTrim(String s) {
+        return s == null ? null : s.trim();
+    }
+
+
     // ===== DTOs internos =====
     public static class OrgRequestDTO {
         @NotBlank public String name;
@@ -27,6 +32,13 @@ public class OrgController {
         @Pattern(regexp = "^[+()\\d\\s.-]{6,}$", message = "telefone inválido")
         public String phone;
         public UUID petOwnedId;
+        public String cep;
+        public String street;
+        public String streetNumber;
+        public String uf;
+        public String neighborhood;
+        public String city;
+
 
         public OrgModel toModel() {
             OrgModel m = new OrgModel();
@@ -34,6 +46,12 @@ public class OrgController {
             m.setEmail(email);
             m.setPhone(phone);
             m.setPetOwnedId(petOwnedId);
+            m.setCep(cep);
+            m.setStreet(street);
+            m.setStreetNumber(streetNumber);
+            m.setUf(uf);
+            m.setNeighborhood(neighborhood);
+            m.setCity(city);
             return m;
         }
     }
@@ -44,6 +62,13 @@ public class OrgController {
         public String email;
         public String phone;
         public UUID petOwnedId;
+        public String cep;
+        public String street;
+        public String streetNumber;
+        public String uf;
+        public String neighborhood;
+        public String city;
+
 
         public static OrgResponseDTO fromModel(OrgModel m) {
             OrgResponseDTO dto = new OrgResponseDTO();
@@ -52,6 +77,13 @@ public class OrgController {
             dto.email = m.getEmail();
             dto.phone = m.getPhone();
             dto.petOwnedId = m.getPetOwnedId();
+            dto.cep = m.getCep();
+            dto.street = m.getStreet();
+            dto.streetNumber = m.getStreetNumber();
+            dto.uf = m.getUf();
+            dto.neighborhood = m.getNeighborhood();
+            dto.city = m.getCity();
+
             return dto;
         }
     }

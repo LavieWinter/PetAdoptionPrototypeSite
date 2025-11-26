@@ -32,6 +32,24 @@ public class Org {
     @Column(name = "pet_owned_id")
     private UUID petOwnedId;
 
+    @Column(name = "cep")
+    private String cep;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "streetNumber")
+    private String streetNumber;
+
+    @Column(name = "uf")
+    private String uf;
+
+    @Column(name = "neighborhood")
+    private String neighborhood;
+
+    @Column(name = "city")
+    private String city;
+
     protected Org() {}
 
     // getters públicos
@@ -40,6 +58,12 @@ public class Org {
     public String getEmail() { return email; }
     public String getPhone() { return phone; }
     public UUID getPetOwnedId() { return petOwnedId; }
+    public String getCep() { return cep; }
+    public String getStreet() { return street; }
+    public String getStreetNumber() { return streetNumber; }
+    public String getUf() { return uf; }
+    public String getNeighborhood() { return neighborhood; }
+    public String getCity() { return city; }
 
     // conversores
     public static Org fromModel(OrgModel m) {
@@ -50,6 +74,12 @@ public class Org {
         e.email = m.getEmail();
         e.phone = m.getPhone();
         e.petOwnedId = m.getPetOwnedId();
+        e.cep = m.getCep();
+        e.street = m.getStreet();
+        e.streetNumber = m.getStreetNumber();
+        e.uf = m.getUf();
+        e.neighborhood = m.getNeighborhood();
+        e.city = m.getCity();
         return e;
     }
 
@@ -61,6 +91,13 @@ public class Org {
         m.setEmail(e.email);
         m.setPhone(e.phone);
         m.setPetOwnedId(e.petOwnedId);
+        m.setCep(e.cep);
+        m.setStreet(e.street);
+        m.setStreetNumber(e.streetNumber);
+        m.setUf(e.uf);
+        m.setNeighborhood(e.neighborhood);
+        m.setCity(e.city);
+
         return m;
     }
 }

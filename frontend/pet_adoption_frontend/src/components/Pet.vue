@@ -8,10 +8,10 @@
       cover
     >
       <v-card-title class="text-white">
-        {{ card.name }}
+        {{ card.name }} 
         <v-icon v-if="card.sex === 'M'" color="blue">mdi-gender-male</v-icon>
         <v-icon v-else color="pink">mdi-gender-female</v-icon>
-        Porte {{ card.size }}
+        Porte {{ card.sizeFormatted }}
       </v-card-title>
     </v-img>
     <v-card-text>

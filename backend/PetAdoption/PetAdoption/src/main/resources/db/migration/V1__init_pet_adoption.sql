@@ -20,6 +20,12 @@ CREATE TABLE IF NOT EXISTS org (
   name         TEXT NOT NULL,
   email        TEXT UNIQUE,
   phone        TEXT,
+  cep          TEXT,
+  street       TEXT,
+  streetNumber TEXT,
+  uf           TEXT,
+  neighborhood TEXT,
+  city         TEXT,
   pet_owned_id UUID -- FK to pets(id), added after pets exists
 );
 

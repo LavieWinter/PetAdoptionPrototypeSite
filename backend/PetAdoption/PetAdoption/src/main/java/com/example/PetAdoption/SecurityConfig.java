@@ -39,6 +39,9 @@ package com.example.PetAdoption;
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/me").authenticated()
                     .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                    .requestMatchers("/api/orgs/create").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/static/**").permitAll()
                     //.requestMatchers("/api/**").permitAll()   // <— liberar temporariamente
                     .requestMatchers("/error").permitAll()
                     .anyRequest().authenticated()
