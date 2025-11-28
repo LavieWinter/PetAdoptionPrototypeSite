@@ -21,6 +21,7 @@ public interface JpaRecommendationRepository extends JpaRepository<Pet, UUID> {
       p.species AS species,
       p.size    AS size,
       p.sex     AS sex,
+      p.pet_image   AS image,
       r.score   AS score
     FROM pets p
     CROSS JOIN LATERAL public.compute_compatibility_score(:adopterId, p.id, :applicationId) AS r(score)

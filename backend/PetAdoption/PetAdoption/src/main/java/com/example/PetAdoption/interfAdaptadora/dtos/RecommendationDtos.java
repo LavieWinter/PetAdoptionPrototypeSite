@@ -10,6 +10,7 @@ public class RecommendationDtos {
         public String size;
         public String sex;
         public Integer score;
+        public String image;
     }
 
     public static class PageResponse {

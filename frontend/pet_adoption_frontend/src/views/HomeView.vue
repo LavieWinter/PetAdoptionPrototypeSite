@@ -9,7 +9,7 @@
           <v-row dense>
             <v-col v-for="card in cards" :key="card.name" cols="4">
               <!-- {{  router.currentRoute.value.name }} -->
-              <Pet v-if="router.currentRoute.value.name == 'home' || router.currentRoute.value.name == 'pets'" :card="card" />
+              <Pet v-if="router.currentRoute.value.name == 'home' || router.currentRoute.value.name == 'pets'" :card="card" :loading="isAdopting" @adopt="onAdopt"/>
               <Ong v-if="router.currentRoute.value.name == 'ongs'" :card="ongCard" />
             </v-col>
             <!-- Skeletons enquanto carrega -->
@@ -32,21 +32,28 @@
         <v-alert v-if="error" type="error" variant="tonal" class="mb-4" density="comfortable">
           {{ error }}
         </v-alert>
+        <v-snackbar v-model="successAdopt" color="success" timeout="3000">
+     {{ successMessage }}
+  </v-snackbar>
       </v-container>
       <ProfileDialog v-model="dialogOpen" :open="dialogOpen" @save="handleSaveProfile" @close="dialogOpen = false" />
+      
     </v-main>
+
   </v-layout>
 </template>
 <script setup>
-import { shallowRef, ref, onMounted } from 'vue'
+import { shallowRef, ref, onMounted, watch } from 'vue'
 import Pet from '@/components/Pet.vue'
 import Ong from '@/components/Ong.vue'
 import ProfileDialog from '@/components/ProfileDialog.vue'
 import AppBar from '@/components/PetAppBar.vue'
 import { listPets, listAvailablePets } from '@/services/pets' // função fictícia para listar pets
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import NavigationDrawer from '@/components/NavigationDrawer.vue'
+import { listOrgs } from '@/services/orgs' // <--- Importe a função criada acima
+import { createAdoptionApplication } from '@/services/adoption' // Importe o serviço novo
 
 const drawer = shallowRef(true)
 const dialogOpen = ref(false)
@@ -57,7 +64,11 @@ const loading = ref(false)
 const error = ref('')
 const router = useRouter()
 const store = useStore()
-
+const cards = ref([])
+const route = useRoute()
+const isAdopting = ref(false) // Estado de loading para o botão
+const successMessage = ref('')
+const successAdopt = ref(false)
 
 async function handleSaveProfile(payload) {
   saving.value = true
@@ -69,208 +80,6 @@ async function handleSaveProfile(payload) {
   }
 }
 
-const cards = ref([
-  // {
-  //   name: 'Marshmellow',
-  //   size: 'Grande',
-  //   caracteristicas: [
-  //     { title: 'Brincalhão', color: 'red' },
-  //     { title: 'Sociável', color: 'brown' },
-  //     { title: 'Protetor', color: 'light-blue' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'F',
-  //   ong: 'Projeto Vida Animal',
-  //   place: 'Sumare, SP',
-  //   weight: '25kg',
-  //   age: '2 anos',
-  //   breed: 'Golden Retriever',
-  //   description:
-  //     'Marshmellow é uma cachorrinha muito amigável e brincalhona. Ela adora correr e brincar com outros cães. Está procurando um lar amoroso onde possa receber muita atenção e carinho.',
-  //   needs: 'Exercício diário, alimentação balanceada, visitas regulares ao veterinário.'
-  // },
-  // {
-  //   name: 'Olaf',
-  //   size: 'Pequeno',
-  //   caracteristicas: [
-  //     { title: 'Independente', color: 'purple' },
-  //     { title: 'Calmo', color: 'blue' },
-  //     { title: 'Seletivo', color: 'green' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'M',
-  //   ong: 'SOS Animal',
-  //   place: 'Hortolandia, SP',
-  //   weight: '8kg',
-  //   age: '4 anos',
-  //   breed: 'Shih Tzu',
-  //   description:
-  //     'Olaf é um cãozinho tranquilo e independente. Ele gosta de passar o tempo sozinho, mas também aprecia momentos de carinho. Está em busca de um lar onde possa ter seu espaço e receber atenção quando desejar.',
-  //   needs: 'Ambiente calmo, alimentação adequada, cuidados básicos de higiene.'
-  // },
-  // {
-  //   name: 'Paçoca',
-  //   size: 'Grande',
-  //   caracteristicas: [
-  //     { title: 'Carinhoso', color: 'red' },
-  //     { title: 'Energético', color: 'yellow' },
-  //     { title: 'Protetor', color: 'light-blue' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'F',
-  //   ong: 'Projeto Vida Animal',
-  //   place: 'Sumare, SP',
-  //   weight: '30kg',
-  //   age: '3 anos',
-  //   breed: 'Pastor Alemão',
-  //   description:
-  //     'Paçoca é uma cadelinha cheia de energia e amor para dar. Ela adora brincar e correr, mas também é muito protetora com sua família. Está procurando um lar ativo onde possa receber muita atenção e exercícios.',
-  //   needs: 'Exercício diário, socialização, alimentação balanceada.'
-  // },
-  // {
-  //   name: 'Simba',
-  //   size: 'Médio',
-  //   caracteristicas: [
-  //     { title: 'Independente', color: 'purple' },
-  //     { title: 'Sociável', color: 'brown' },
-  //     { title: 'Carinhoso', color: 'red' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'M',
-  //   ong: 'SOS Animal',
-  //   place: 'Hortolandia, SP',
-  //   weight: '15kg',
-  //   age: '5 anos',
-  //   breed: 'Beagle',
-  //   description:
-  //     'Simba é um cãozinho amigável e sociável. Ele gosta de interagir com outros cães e pessoas, mas também aprecia momentos de independência. Está em busca de um lar onde possa ter equilíbrio entre socialização e tempo sozinho.',
-  //   needs: 'Socialização, alimentação adequada, cuidados básicos de saúde.'
-  // },
-  // {
-  //   name: 'Luna',
-  //   size: 'Pequeno',
-  //   caracteristicas: [
-  //     { title: 'Carinhosa', color: 'red' },
-  //     { title: 'Independente', color: 'purple' },
-  //     { title: 'Curiosa', color: 'orange' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'F',
-  //   ong: 'Gatinhos do Bem',
-  //   place: 'Campinas, SP',
-  //   weight: '4kg',
-  //   age: '1 ano',
-  //   breed: 'SRD (Gato)',
-  //   description:
-  //     'Luna é uma gatinha meiga e curiosa. Adora explorar a casa e tirar sonecas no sol. Procura uma família com carinho e paciência.',
-  //   needs: 'Ambiente seguro, arranhador, alimentação balanceada.'
-  // },
-  // {
-  //   name: 'Thor',
-  //   size: 'Grande',
-  //   caracteristicas: [
-  //     { title: 'Energético', color: 'yellow' },
-  //     { title: 'Brincalhão', color: 'red' },
-  //     { title: 'Protetor', color: 'light-blue' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'M',
-  //   ong: 'Cão Feliz',
-  //   place: 'Paulínia, SP',
-  //   weight: '28kg',
-  //   age: '3 anos',
-  //   breed: 'Labrador Retriever',
-  //   description:
-  //     'Thor é um cão muito ativo e leal. Ama acompanhar a família em passeios e brincadeiras ao ar livre.',
-  //   needs: 'Exercício diário, enriquecimento ambiental, socialização.'
-  // },
-  // {
-  //   name: 'Mel',
-  //   size: 'Médio',
-  //   caracteristicas: [
-  //     { title: 'Sociável', color: 'brown' },
-  //     { title: 'Calma', color: 'blue' },
-  //     { title: 'Carinhosa', color: 'red' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'F',
-  //   ong: 'Miados & Ronrons',
-  //   place: 'Sumaré, SP',
-  //   weight: '5kg',
-  //   age: '2 anos',
-  //   breed: 'Siamês (Gato)',
-  //   description:
-  //     'Mel é doce e companheira. Se dá bem com pessoas e outros gatos, perfeita para um lar tranquilo.',
-  //   needs: 'Caixa de areia limpa, brinquedos interativos, escovação ocasional.'
-  // },
-  // {
-  //   name: 'Bento',
-  //   size: 'Médio',
-  //   caracteristicas: [
-  //     { title: 'Sociável', color: 'brown' },
-  //     { title: 'Obediente', color: 'green' },
-  //     { title: 'Brincalhão', color: 'red' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1558944351-c7a7a74a5b1f?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'M',
-  //   ong: 'Projeto Vida Animal',
-  //   place: 'Hortolândia, SP',
-  //   weight: '12kg',
-  //   age: '2 anos',
-  //   breed: 'Vira-lata (SRD)',
-  //   description:
-  //     'Bento é um amigão equilibrado: adora brincar, mas sabe relaxar com a família. Ótimo para primeiros tutores.',
-  //   needs: 'Passeios regulares, rotina de treinos leves, alimentação adequada.'
-  // },
-  // {
-  //   name: 'Nala',
-  //   size: 'Pequeno',
-  //   caracteristicas: [
-  //     { title: 'Carinhosa', color: 'red' },
-  //     { title: 'Sossegada', color: 'blue' },
-  //     { title: 'Dócil', color: 'green' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1510070009289-b5bc34383727?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'F',
-  //   ong: 'Gatinhos do Bem',
-  //   place: 'Campinas, SP',
-  //   weight: '3.5kg',
-  //   age: '2 anos',
-  //   breed: 'Persa (Gato)',
-  //   description:
-  //     'Nala adora colo e momentos tranquilos. Ideal para um lar sereno e cheio de afeto.',
-  //   needs: 'Escovação frequente, ambiente calmo, consultas veterinárias regulares.'
-  // },
-  // {
-  //   name: 'Chico',
-  //   size: 'Pequeno',
-  //   caracteristicas: [
-  //     { title: 'Companheiro', color: 'brown' },
-  //     { title: 'Calmo', color: 'blue' },
-  //     { title: 'Simpático', color: 'orange' }
-  //   ],
-  //   src: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=1170&q=80',
-  //   flex: 4,
-  //   sex: 'M',
-  //   ong: 'SOS Animal',
-  //   place: 'Americana, SP',
-  //   weight: '9kg',
-  //   age: '6 anos',
-  //   breed: 'Pug',
-  //   description:
-  //     'Chico é um senhor simpático e tranquilo. Gosta de uma boa soneca e de acompanhar a família pela casa.',
-  //   needs: 'Controle de peso, passeios curtos e frequentes, atenção com respiração.'
-  // }
-])
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 const ongCard = ref([
@@ -307,94 +116,134 @@ const SPECIES_MAP = {
   'DOG': 'Cão'
 }
 
-async function loadMore({ done }) {
-  if (!hasMore.value || loading.value) {
-    done('ok')
+// --- WATCHER DE ROTA ---
+// Isso é crucial: quando mudar de 'pets' para 'ongs', limpa tudo.
+watch(() => route.name, (newRoute) => {
+  cards.value = []
+  page.value = 0
+  hasMore.value = true
+  error.value = ''
+  loading.value = false
+  
+  // O v-infinite-scroll tentará carregar automaticamente ao resetar, 
+  // mas garantimos a chamada se a lista estiver vazia
+  loadMore({ done: () => {} })
+})
+
+// === FUNÇÃO PRINCIPAL DO SCROLL ===
+async function loadMore({ done = () => {} } = {}) {
+  if (loading.value) {
+    if(done) done('ok')
     return
   }
+  
+  if (!hasMore.value) {
+    if(done) done('empty')
+    return
+  }
+
   loading.value = true
   error.value = ''
-  
+
   try {
-    // Chama API
-    const { items, last, page: currentPage } = await listAvailablePets({ page: page.value, size: size.value })
-    
-    if (Array.isArray(items) && items.length) {
-      
-      // === MAPPER: Transforma JSON do Back no formato visual do Front ===
-      const mappedItems = items.map(pet => {
-        
-        // 1. Gera Array de Características (Chips) baseado nos booleanos/strings
-        const traits = []
-        
-        if (pet.goodWithOtherAnimals) {
-          traits.push({ title: 'Sociável', color: 'green' })
-        }
-        
-        if (pet.requiresConstantCare) {
-          traits.push({ title: 'Cuidados Constantes', color: 'orange' })
-        }
-        
-        if (pet.hasOngoingTreatment) {
-          traits.push({ title: 'Em Tratamento', color: 'blue' })
-        }
-        
-        // Se tiver doença crônica ou necessidade especial, vira chip
-        if (pet.hasSpecialNeeds) {
-          traits.push({ title: pet.hasSpecialNeeds, color: 'red' }) // Ex: WHEELCHAIR
-        }
-        if (pet.hasChronicDisease) {
-           traits.push({ title: `Condição: ${pet.hasChronicDisease}`, color: 'purple' })
-        }
+    const currentRouteName = route.name
 
-        // 2. Monta necessidades em texto corrido para o modal
-        const needsText = [
-            pet.hasSpecialNeeds ? `Necessidades: ${pet.hasSpecialNeeds}` : null,
-            pet.hasOngoingTreatment ? 'Possui tratamento em andamento' : null,
-            pet.requiresConstantCare ? 'Requer supervisão constante' : null
-        ].filter(Boolean).join(', ') || 'Nenhuma necessidade especial informada.'
-
-        // 3. Retorna objeto formatado
-        return {
-          ...pet,
-          // Ajusta Imagem
-          src: pet.petImage 
-            ? `${API_BASE_URL}${pet.petImage}` 
-            : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=500&q=60',
-          
-          // Traduções
-          sizeFormatted: SIZE_MAP[pet.size] || pet.size,
-          speciesFormatted: SPECIES_MAP[pet.species] || pet.species,
-          
-          // Campos para o Card e Dialog
-          caracteristicas: traits,
-          place: 'Campinas, SP', // Hardcoded pois o back ainda não tem cidade/estado
-          ong: 'ONG Parceira',   // Hardcoded pois rescuedById ainda é ID
-          age: 'Não inf.',       // Back não tem data de nascimento ainda
-          weight: 'Não inf.',    // Back não tem peso ainda
-          
-          // Mapeia descrição para garantir que não quebre se for null
-          description: pet.petDescription || 'Este pet ainda não tem uma descrição detalhada, mas está ansioso para te conhecer!',
-          needs: needsText
-        }
-      })
-      // =================================================================
-
-      cards.value.push(...mappedItems)
-      page.value = (currentPage ?? page.value) + 1
-      hasMore.value = !last
-      done(last ? 'empty' : 'ok')
+    if (currentRouteName === 'ongs') {
+      await fetchOrgs(done)
     } else {
-      hasMore.value = false
-      if(cards.value.length === 0) error.value = 'Nenhum pet encontrado.'
-      done('empty')
+      // Padrão para 'home' ou 'pets'
+      await fetchPets(done)
     }
   } catch (e) {
-    error.value = 'Falha ao carregar pets.'
+    error.value = 'Falha ao carregar dados.'
     console.error(e)
-    done('error')
+    if(done) done('error')
   } finally {
     loading.value = false
+  }
+}
+
+// === LÓGICA DE ONGS ===
+async function fetchOrgs(done) {
+  // Chama o serviço
+  const { items, last } = await listOrgs({ page: page.value, size: size.value })
+
+  if (Array.isArray(items) && items.length) {
+    const mappedOrgs = items.map(org => {
+      return {
+        id: org.id,
+        // OrgResponseDTO: { id, name, email, phone, city, neighborhood, uf... }
+        name: org.name,
+        // Como o back não tem imagem de ONG, usamos um placeholder
+        src: 'https://cdn-icons-png.flaticon.com/512/10009/10009983.png', 
+        
+        // Formata localização
+        place: org.city && org.uf ? `${org.city}, ${org.uf}` : 'Localização não informada',
+        neighborhood: org.neighborhood,
+        
+        // Contatos
+        email: org.email,
+        phone: org.phone,
+        
+        // Propriedade para controle de layout (grid)
+        flex: 4 
+      }
+    })
+
+    cards.value.push(...mappedOrgs)
+    page.value += 1
+    hasMore.value = !last // Se 'last' for true (veio menos itens que o size), paramos.
+    done(last ? 'empty' : 'ok')
+  } else {
+    hasMore.value = false
+    done('empty')
+  }
+}
+
+// === LÓGICA DE PETS (A sua existente) ===
+async function fetchPets(done) {
+  const { items, last, page: currentPage } = await listAvailablePets({ page: page.value, size: size.value })
+    
+  if (Array.isArray(items) && items.length) {
+    const mappedPets = items.map(pet => {
+      const traits = []
+      if (pet.goodWithOtherAnimals) traits.push({ title: 'Sociável', color: 'green' })
+      if (pet.requiresConstantCare) traits.push({ title: 'Cuidados Constantes', color: 'orange' })
+      if (pet.hasOngoingTreatment) traits.push({ title: 'Em Tratamento', color: 'blue' })
+      if (pet.hasSpecialNeeds) traits.push({ title: pet.hasSpecialNeeds, color: 'red' })
+      if (pet.hasChronicDisease) traits.push({ title: `Condição: ${pet.hasChronicDisease}`, color: 'purple' })
+
+      const needsText = [
+          pet.hasSpecialNeeds ? `Necessidades: ${pet.hasSpecialNeeds}` : null,
+          pet.hasOngoingTreatment ? 'Possui tratamento em andamento' : null,
+          pet.requiresConstantCare ? 'Requer supervisão constante' : null
+      ].filter(Boolean).join(', ') || 'Nenhuma necessidade especial informada.'
+
+      return {
+        ...pet,
+        src: pet.petImage 
+          ? `${API_BASE_URL}${pet.petImage}` 
+          : 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=500&q=60',
+        sizeFormatted: SIZE_MAP[pet.size] || pet.size,
+        speciesFormatted: SPECIES_MAP[pet.species] || pet.species,
+        caracteristicas: traits,
+        place: 'Campinas, SP', 
+        ong: 'ONG Parceira',  
+        age: 'Não inf.',      
+        weight: 'Não inf.',    
+        description: pet.petDescription || 'Este pet ainda não tem uma descrição detalhada.',
+        needs: needsText,
+        flex: 4
+      }
+    })
+
+    cards.value.push(...mappedPets)
+    page.value = (currentPage ?? page.value) + 1
+    hasMore.value = !last
+    done(last ? 'empty' : 'ok')
+  } else {
+    hasMore.value = false
+    done('empty')
   }
 }
 
@@ -406,4 +255,46 @@ async function logout() {
 onMounted(() => {
   loadMore()
 })
+
+async function onAdopt(pet) {
+  // 1. Verificação básica de login (se necessário)
+  // const store = useStore();
+  // if (!store.getters['user/isAuthenticated']) {
+  //    router.push('/login'); 
+  //    return;
+  // }
+
+  isAdopting.value = true
+  error.value = ''
+  successMessage.value = ''
+
+  try {
+    // 2. Chama o Backend
+    await createAdoptionApplication(pet.id)
+    
+    // 3. Sucesso
+    console.log('Pedido de adoção criado com sucesso!')
+    successMessage.value = `Pedido enviado para ${pet.name}! Acompanhe em "Meus Pets".`
+    successAdopt.value = true
+    
+    // Fecha o modal após um breve delay ou imediatamente
+    isSelected.value = false 
+    
+    // Opcional: Redirecionar para uma página de sucesso ou lista de aplicações
+    // router.push('/minhas-adocoes')
+
+  } catch (e) {
+    console.error(e)
+    // Tratamento de erro básico
+    if (e.response && e.response.status === 401) {
+       error.value = 'Você precisa estar logado para adotar.'
+       router.push('/login')
+    } else {
+       error.value = 'Erro ao solicitar adoção. Tente novamente.'
+    }
+  } finally {
+    isAdopting.value = false
+  }
+}
+
 </script>

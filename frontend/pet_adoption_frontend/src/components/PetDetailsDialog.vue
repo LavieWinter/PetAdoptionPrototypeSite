@@ -93,6 +93,8 @@
             size="large"
             block
             rounded="lg"
+            :loading="loading"
+            :disabled="loading"
             @click="$emit('adopt', pet)"
           >
             Achei meu amigo!
@@ -108,6 +110,7 @@ import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
   pet: {
     type: Object,
     required: true

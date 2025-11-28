@@ -10,4 +10,5 @@ public interface PetRecommendationRow {
     String getSize();
     String getSex();
     Integer getScore();
+    String getImage();
 }

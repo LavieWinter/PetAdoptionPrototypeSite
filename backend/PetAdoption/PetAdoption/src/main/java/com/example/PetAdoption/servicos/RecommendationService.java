@@ -49,6 +49,7 @@ public class RecommendationService {
         it.size = r.getSize();
         it.sex = r.getSex();
         it.score = r.getScore();
+        it.image = r.getImage();
         return it;
     }
 }

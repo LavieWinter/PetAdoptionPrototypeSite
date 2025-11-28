@@ -44,8 +44,8 @@ const props = defineProps({
 })
 
 const isSelected = ref(false)
+const emit = defineEmits(['adopt'])
 function onAdopt(pet) {
-  // ação ao clicar no CTA (ex.: navegar para "iniciar adoção")
-  console.log('Quero adotar:', pet.name)
+  emit('adopt', pet)
 }
 </script>

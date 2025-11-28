@@ -60,21 +60,25 @@ async function logout() {
 
 const items = [
   {
-    text: 'Home'
+    text: 'Home',
+    to: '/' // Rota raiz
   },
   {
-    text: 'Adotar animal'
+    text: 'Adotar animal',
+    to: '/' // Ou '/' se a home for a lista de pets
   },
   {
-    text: 'ONGs'
+    text: 'ONGs',
+    to: '/ongs'
   },
   {
-    text: 'Meus Pets'
+    text: 'Meus Pets',
+    to: '/minhas-adocoes' // Ajuste conforme sua rota definida no router
   },
   {
-    text: 'Sobre nós'
+    text: 'Sobre nós',
+    to: '/about'
   }
 ]
-
 
 </script>

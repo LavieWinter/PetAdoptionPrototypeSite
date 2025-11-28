@@ -15,9 +15,9 @@ LOCALE = "pt_BR"
 TEMP_IMG_NAME = "temp_pet_image.jpg" # Nome temporário para o arquivo baixado
 
 # Quantidade de dados
-NUM_USERS = 20
-NUM_ORGS = 5
-NUM_PETS = 50 
+NUM_USERS = 0
+NUM_ORGS = 0 
+NUM_PETS = 10000 
 
 # Configuração de Log
 logging.basicConfig(
